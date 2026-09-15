@@ -37,7 +37,14 @@
 <div class="breadcrumb"><span>Gestión empresarial</span><span class="breadcrumb-separator">/</span><strong id="breadcrumbActual">Directorio</strong></div>
 <div class="top-actions">
 <button class="icon-button" title="Ayuda">?</button>
-<button class="icon-button" title="Opciones">•••</button>
+<div class="opciones-contenido">
+<button id="btnOpcionesContenido" class="icon-button" type="button" title="Opciones" aria-label="Opciones de contenido" aria-expanded="false">•••</button>
+<div id="menuOpcionesContenido" class="menu-opciones-contenido hidden">
+<button id="btnImportarContenido" type="button"><span>📥</span> Importar Contenido</button>
+<button id="btnExportarContenido" type="button"><span>📤</span> Exportar contenido</button>
+</div>
+<input id="archivoImportarContenido" type="file" accept=".json,application/json" hidden>
+</div>
 </div>
 </header>
 <section id="paginaResumen" class="page">
