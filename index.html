@@ -19,7 +19,7 @@
 <button class="sidebar-action">•••</button>
 </div>
 <nav class="menu">
-<button class="menu-item" data-page="resumen"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4m5 4V8m5 8v-6"/></svg></span><span>Resumen</span></button>
+<button class="menu-item" data-page="resumen"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4m5 4V8m5 8v-6"/></svg></span><span>Reportes</span></button>
 <button class="menu-item active" data-page="directorio"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5h14a2 2 0 0 1 2 2V20H6a2 2 0 0 0-2 2V4.5Z"/><path d="M4 18a2 2 0 0 1 2-2h14M8 9h8M8 12h6"/></svg></span><span>Directorio</span></button>
 <button class="menu-item" data-page="centros-costos"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/><path d="M12 10v7m-3-3.5 3 3 3-3"/></svg></span><span>Carga de archivos</span></button>
 </nav>
@@ -59,7 +59,7 @@
 <div id="dashboardCostos" class="dashboard-costos hidden">
 <div id="avisoResumenCostos" class="resumen-aviso hidden"></div>
 <div class="vistas-resumen" role="tablist" aria-label="Vistas de resumen">
-<button class="vista-resumen active" type="button" data-resumen="tablas">Tablas</button>
+<button class="vista-resumen active" type="button" data-resumen="tablas">Detallado</button>
 <button class="vista-resumen" type="button" data-resumen="categorias">Categorías</button>
 <button class="vista-resumen" type="button" data-resumen="balance">Balance</button>
 <label class="selector-archivo-resumen"><span>Archivo</span><select id="selectorArchivoResumen"></select></label>
@@ -172,6 +172,13 @@
 <span>Copia las celdas desde Excel y presiona Ctrl + V</span>
 </div>
 <div id="vistaCentrosCostos" class="costos-resultados hidden">
+<div class="datos-reporte-archivo">
+<label>EMPRESA<input id="empresaArchivo" type="text" placeholder="Nombre de la empresa" maxlength="120"></label>
+<label>CONTRATO NRO.<input id="contratoArchivo" type="text" placeholder="Número de contrato" maxlength="60"></label>
+<label>PROYECTO<input id="proyectoArchivo" type="text" placeholder="Nombre del proyecto" maxlength="120"></label>
+<label>PLAZO<input id="plazoArchivo" type="text" placeholder="Ej. 6 meses" maxlength="60"></label>
+<label>MONTO<input id="montoArchivo" type="text" placeholder="Ej. $50.000,00" maxlength="60"></label>
+</div>
 <div class="costos-resultados-barra">
 <strong id="resumenCentrosCostos">0 filas</strong>
 <button id="limpiarCentrosCostos" type="button">Limpiar</button>
@@ -216,15 +223,6 @@
 <button id="confirmarPegarExcel" class="btn-confirmar-acceso" type="button">Agregar datos</button>
 </div>
 </div>
-</div>
-<div id="modalReporte" class="mini-modal hidden">
-<form id="formReporte" class="mini-modal-box">
-<div class="mini-modal-title">Reporte gerencial</div>
-<p class="reporte-form-texto">Completa los datos que aparecerán en el encabezado.</p>
-<label class="reporte-form-label">Empresa<input id="empresaReporte" type="text" placeholder="Nombre de la empresa" required maxlength="120"></label>
-<label class="reporte-form-label">Proyecto<input id="proyectoReporte" type="text" placeholder="Nombre del proyecto" required maxlength="120"></label>
-<div class="mini-modal-actions"><button id="cancelarReporte" type="button">Cancelar</button><button class="btn-confirmar-acceso" type="submit">Generar e imprimir</button></div>
-</form>
 </div>
 <div id="reporteImpresion"></div>
 <div id="toast" class="toast">
