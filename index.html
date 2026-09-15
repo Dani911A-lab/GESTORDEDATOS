@@ -19,9 +19,9 @@
 <button class="sidebar-action">•••</button>
 </div>
 <nav class="menu">
-<button class="menu-item" data-page="resumen"><span class="menu-icon">⌂</span><span>Resumen</span></button>
-<button class="menu-item active" data-page="directorio"><span class="menu-icon">◫</span><span>Directorio</span></button>
-<button class="menu-item" data-page="centros-costos"><span class="menu-icon">📂</span><span>Carga de archivos</span></button>
+<button class="menu-item" data-page="resumen"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4m5 4V8m5 8v-6"/></svg></span><span>Resumen</span></button>
+<button class="menu-item active" data-page="directorio"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5h14a2 2 0 0 1 2 2V20H6a2 2 0 0 0-2 2V4.5Z"/><path d="M4 18a2 2 0 0 1 2-2h14M8 9h8M8 12h6"/></svg></span><span>Directorio</span></button>
+<button class="menu-item" data-page="centros-costos"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/><path d="M12 10v7m-3-3.5 3 3 3-3"/></svg></span><span>Carga de archivos</span></button>
 </nav>
 <div class="sidebar-section">
 <div class="sidebar-title">ESPACIO DE TRABAJO</div>
@@ -88,6 +88,7 @@
 <div id="graficoComposicion" class="composicion-costos"></div>
 <div id="leyendaComposicion" class="leyenda-composicion"></div>
 </article>
+<div class="accion-imprimir-balance"><button id="btnImprimirBalance" type="button">🖨️ IMPRIMIR</button></div>
 </div>
 </div>
 </section>
@@ -216,6 +217,16 @@
 </div>
 </div>
 </div>
+<div id="modalReporte" class="mini-modal hidden">
+<form id="formReporte" class="mini-modal-box">
+<div class="mini-modal-title">Reporte gerencial</div>
+<p class="reporte-form-texto">Completa los datos que aparecerán en el encabezado.</p>
+<label class="reporte-form-label">Empresa<input id="empresaReporte" type="text" placeholder="Nombre de la empresa" required maxlength="120"></label>
+<label class="reporte-form-label">Proyecto<input id="proyectoReporte" type="text" placeholder="Nombre del proyecto" required maxlength="120"></label>
+<div class="mini-modal-actions"><button id="cancelarReporte" type="button">Cancelar</button><button class="btn-confirmar-acceso" type="submit">Generar e imprimir</button></div>
+</form>
+</div>
+<div id="reporteImpresion"></div>
 <div id="toast" class="toast">
 <div id="toastIcon" class="toast-icon">✓</div>
 <div><strong id="toastTitulo">Listo</strong><p id="toastMensaje"></p></div>
