@@ -42,6 +42,29 @@ button{color:inherit}
 .page-icon{font-size:38px;line-height:1}
 .page-heading h1{margin:0 0 7px;font-size:26px;letter-spacing:-1px;font-weight:700}
 .page-heading p{margin:0;color:var(--muted);font-size:12px}
+.costos-dropzone{min-height:390px;width:100%;border:1.5px dashed #cfceca;border-radius:10px;background:#fbfbfa;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);cursor:text;outline:none;transition:border-color .15s ease,background-color .15s ease,box-shadow .15s ease}
+.costos-dropzone:hover,.costos-dropzone:focus,.costos-dropzone.drag-over{border-color:#9d9c98;background:#f7f7f5;box-shadow:0 0 0 3px rgba(55,53,47,.05)}
+.costos-dropzone-icon{width:42px;height:42px;border-radius:8px;background:#efefed;display:flex;align-items:center;justify-content:center;font-size:22px;color:#777673;margin-bottom:4px}
+.costos-dropzone strong{font-size:15px;font-weight:600;color:#55544f}
+.costos-dropzone span{font-size:11px;color:#999895}
+.costos-dropzone.recibido{border-style:solid;border-color:#9bc8a6;background:#f7fbf8}
+.pestanas-archivos{display:flex;align-items:flex-end;gap:4px;margin-bottom:12px;border-bottom:1px solid var(--border)}
+.lista-vistas-archivos{display:flex;gap:3px;overflow-x:auto}
+.vista-archivo{height:34px;min-width:90px;max-width:190px;padding:0 11px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-size:11px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vista-archivo:hover{background:#f7f7f5}.vista-archivo.active{border-bottom-color:#37352f;color:var(--text);font-weight:600}
+.vista-archivo[contenteditable="true"]{cursor:text;outline:1px solid #b9b8b5;background:#fff;border-radius:4px;overflow:visible}
+.agregar-vista-archivo{width:31px;height:31px;margin-bottom:2px;border:0;border-radius:5px;background:transparent;color:var(--muted);cursor:pointer;font-size:17px}.agregar-vista-archivo:hover{background:var(--hover);color:var(--text)}
+.costos-dropzone.compacto{min-height:115px;margin-bottom:14px}
+.costos-dropzone.compacto .costos-dropzone-icon{display:none}
+.costos-resultados{width:100%;border:1px solid var(--border);border-radius:7px;background:#fff;overflow:hidden}
+.costos-resultados-barra{min-height:42px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted)}
+.costos-resultados-barra strong{font-weight:500;color:var(--text)}
+.costos-resultados-barra button{height:27px;padding:0 9px;border:1px solid var(--border-dark);border-radius:5px;background:#fff;cursor:pointer;font-size:11px}
+.costos-tabla-scroll{width:100%;max-height:520px;overflow:auto}
+#tablaCentrosCostos{width:100%;border-collapse:collapse;font-size:11px}
+#tablaCentrosCostos th{height:30px;padding:0 8px;text-align:left;background:#fafafa;color:#6b6a67;font-weight:500;border-right:1px solid #ededeb;border-bottom:1px solid #dededb;white-space:nowrap;position:sticky;top:0;z-index:2}
+#tablaCentrosCostos td{height:32px;padding:6px 9px;color:#454440;border-right:1px solid #f0f0ee;border-bottom:1px solid #eeeeec;min-width:120px;white-space:normal;overflow-wrap:anywhere}
+#tablaCentrosCostos tbody tr:hover td{background:#f8f8f6}
 .tabs{display:flex;align-items:center;gap:3px;border-bottom:1px solid var(--border);margin-bottom:14px;overflow-x:auto;scrollbar-width:thin}
 .tab{height:39px;padding:0 11px;border:0;background:transparent;display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;position:relative;white-space:nowrap}
 .tab:hover{background:#f7f7f5;color:var(--text)}
@@ -129,6 +152,49 @@ th.action-column{background:#fafafa!important;z-index:8}
 .summary-card>div:last-child{display:flex;flex-direction:column}
 .summary-card span{font-size:11px;color:var(--muted)}
 .summary-card strong{font-size:20px;margin-top:2px}
+.resumen-costos-vacio{min-height:330px;border:1.5px dashed #d7d6d2;border-radius:10px;background:#fbfbfa;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--muted)}
+.resumen-costos-vacio>div{font-size:31px;margin-bottom:10px}.resumen-costos-vacio strong{font-size:15px;color:var(--text)}.resumen-costos-vacio p{font-size:12px;margin:6px 0 0}
+.dashboard-costos{display:flex;flex-direction:column;gap:14px}
+.vistas-resumen{display:flex;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto}
+.selector-archivo-resumen{margin-left:auto;display:flex;align-items:center;gap:7px;padding:0 2px 6px 12px;font-size:10px;color:var(--muted)}
+.selector-archivo-resumen select{height:29px;max-width:210px;border:1px solid var(--border-dark);border-radius:5px;background:#fff;padding:0 8px;font-size:11px;color:var(--text);outline:none}
+.vista-resumen{height:38px;padding:0 14px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-size:12px;font-weight:500;white-space:nowrap}
+.vista-resumen:hover{background:#f7f7f5;color:var(--text)}.vista-resumen.active{color:var(--text);border-bottom-color:#37352f}
+.tablas-cuentas-costos{display:flex;flex-direction:column;gap:16px}
+.tabla-cuenta-card{border:1px solid var(--border);border-radius:8px;background:#fff;overflow:hidden}
+.tabla-cuenta-titulo{padding:13px 15px;background:#f7f7f5;border-bottom:1px solid var(--border);font-size:14px;font-weight:650;color:var(--text)}
+.tabla-cuenta-scroll{width:100%;overflow-x:auto}
+.tabla-cuenta{width:100%;border-collapse:collapse;font-size:11px}
+.tabla-cuenta th{padding:10px 12px;background:#fbfbfa;color:#777673;font-weight:600;text-align:left;border-bottom:1px solid #dededb}
+.tabla-cuenta td{padding:10px 12px;border-bottom:1px solid #eeeeec;border-right:1px solid #f0f0ee;vertical-align:top;min-width:130px}
+.tabla-cuenta tr:last-child td{border-bottom:0}.tabla-cuenta tbody tr:hover td{background:#fbfbfa}
+.tabla-cuenta .subcuenta-combinada{width:26%;background:#fdfdfc;font-weight:600;vertical-align:middle;color:#55544f;border-right:1px solid #e5e5e2}
+.tabla-cuenta .valor-cuenta{width:19%;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600}
+.tabla-cuenta-card.cuenta-ingreso .valor-cuenta{color:#238653;background:#f6fbf8}
+.tabla-cuenta-card.cuenta-gasto .valor-cuenta{color:#c34f47;background:#fff8f7}
+.tabla-cuenta-card.cuenta-ingreso .tabla-cuenta-titulo{border-left:4px solid #3d9b68}
+.tabla-cuenta-card.cuenta-gasto .tabla-cuenta-titulo{border-left:4px solid #d36a62}
+.resumen-aviso{padding:9px 12px;border:1px solid #eadcae;border-radius:7px;background:#fffaf0;color:#80691f;font-size:11px}
+.metricas-costos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.metrica-costos{min-height:112px;border:1px solid var(--border);border-radius:9px;padding:16px;display:flex;flex-direction:column;background:#fff;box-shadow:0 2px 8px rgba(15,15,15,.035)}
+.metrica-costos span{font-size:11px;color:var(--muted);font-weight:600}.metrica-costos strong{font-size:24px;margin:10px 0 5px;letter-spacing:-.5px}.metrica-costos small{font-size:10px;color:var(--light)}
+.metrica-costos.ingreso{border-top:3px solid #3d9b68}.metrica-costos.egreso{border-top:3px solid #d36a62}.metrica-costos.balance{border-top:3px solid #4c7fc0}.metrica-costos.balance.negativo strong{color:#bd4f48}
+.resumen-costos-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.75fr);gap:12px}
+.panel-resumen-costos{border:1px solid var(--border);border-radius:9px;background:#fff;padding:16px;min-height:300px}
+.panel-resumen-titulo{display:flex;justify-content:space-between;gap:10px;margin-bottom:19px}.panel-resumen-titulo>div{display:flex;flex-direction:column;gap:3px}.panel-resumen-titulo strong{font-size:13px}.panel-resumen-titulo span{font-size:10px;color:var(--muted)}
+.grafico-costos{display:flex;flex-direction:column;gap:13px}.barra-costo-cabecera{display:flex;justify-content:space-between;gap:12px;margin-bottom:5px;font-size:11px}.barra-costo-cabecera span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.barra-costo-cabecera strong{font-size:10px;white-space:nowrap}.barra-costo-pista{height:8px;border-radius:99px;background:#f0f0ee;overflow:hidden}.barra-costo-relleno{height:100%;min-width:2px;border-radius:99px;background:#d36a62}.barra-costo.ingreso .barra-costo-relleno{background:#3d9b68}
+.composicion-costos{width:178px;height:178px;border-radius:50%;margin:28px auto 23px;position:relative;background:#eee}.composicion-costos:after{content:"";position:absolute;inset:33px;border-radius:50%;background:#fff}
+.barra-costo.desconocido .barra-costo-relleno{background:#9b9a97}
+.comparativa-categorias{display:grid;grid-template-columns:1fr;gap:14px;border:1px solid #d8d7d3;border-radius:9px;background:#efefed;padding:16px}
+.comparativa-item .barra-costo-cabecera{font-weight:600;margin-bottom:9px}.comparativa-item .barra-costo-pista{height:13px}.comparativa-item.ingreso .barra-costo-relleno{background:#3d9b68}.comparativa-item.egreso .barra-costo-relleno{background:#d36a62}
+.contenedores-categorias{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+.contenedores-categorias .panel-resumen-costos{min-height:0;padding:14px 16px}
+.contenedores-categorias .panel-resumen-titulo{margin-bottom:13px}
+.total-categoria-gastos{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 12px;margin:-5px 0 17px;border-radius:6px;background:#fff5f3;color:#bd4f48;font-size:11px}.total-categoria-gastos span{font-weight:700;font-variant-numeric:tabular-nums}
+.resumen-sin-datos{font-size:11px;color:var(--muted)}
+@media(max-width:800px){.comparativa-categorias,.contenedores-categorias{grid-template-columns:1fr}}
+.leyenda-composicion{display:flex;flex-direction:column;gap:9px;font-size:11px}.leyenda-item{display:flex;align-items:center;justify-content:space-between}.leyenda-item>span:first-child{display:flex;align-items:center;gap:7px}.leyenda-color{width:8px;height:8px;border-radius:50%;display:inline-block}
+@media(max-width:900px){.resumen-costos-grid{grid-template-columns:1fr}.metricas-costos{grid-template-columns:1fr}}
 .mini-modal{position:fixed;inset:0;background:rgba(15,15,15,.15);display:flex;align-items:center;justify-content:center;z-index:200;padding:15px}
 .mini-modal-box{width:330px;max-width:100%;background:#fff;border:1px solid #dededb;border-radius:8px;box-shadow:0 10px 40px rgba(15,15,15,.16);padding:15px}
 .mini-modal-title{font-size:13px;font-weight:600;margin-bottom:10px}
@@ -140,6 +206,11 @@ th.action-column{background:#fafafa!important;z-index:8}
 .acceso-claves-texto{margin:0 0 12px;color:var(--muted);font-size:12px}
 .acceso-claves-error{min-height:16px;margin:5px 0 0;color:#c74444;font-size:11px}
 .mini-modal-actions .btn-confirmar-acceso{background:#37352f;color:#fff;border-color:#37352f}
+.pegar-excel-box{width:560px}
+.pegar-excel-texto{margin:0 0 12px;color:var(--muted);font-size:12px}
+#textoPegarExcel{width:100%;min-height:180px;resize:vertical;border:1px solid #d7d7d4;border-radius:5px;padding:9px;font-family:inherit;font-size:12px;line-height:1.5;box-sizing:border-box;outline:none}
+#textoPegarExcel:focus{border-color:#aaa9a6;box-shadow:0 0 0 1px #aaa9a6}
+.pegar-excel-error{min-height:16px;margin:5px 0 0;color:#c74444;font-size:11px}
 .toast{position:fixed;right:20px;bottom:20px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);border-radius:7px;padding:11px 14px;display:flex;gap:10px;align-items:center;min-width:260px;transform:translateY(100px);opacity:0;pointer-events:none;transition:.25s;z-index:300}
 .toast.show{transform:translateY(0);opacity:1}
 .toast-icon{width:28px;height:28px;background:#e6f4ea;color:#238636;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
