@@ -21,6 +21,7 @@
 <nav class="menu">
 <button class="menu-item" data-page="resumen"><span class="menu-icon">⌂</span><span>Resumen</span></button>
 <button class="menu-item active" data-page="directorio"><span class="menu-icon">◫</span><span>Directorio</span></button>
+<button class="menu-item" data-page="centros-costos"><span class="menu-icon">📂</span><span>Carga de archivos</span></button>
 </nav>
 <div class="sidebar-section">
 <div class="sidebar-title">ESPACIO DE TRABAJO</div>
@@ -41,15 +42,46 @@
 </header>
 <section id="paginaResumen" class="page">
 <div class="page-heading">
-<div class="page-icon">🏠</div>
-<div><h1>Resumen</h1><p>Vista general de tu información empresarial.</p></div>
+<div class="page-icon">📊</div>
+<div><h1>Resumen de Costos</h1><p>Análisis de ingresos y egresos basado en los archivos cargados.</p></div>
 </div>
-<div class="summary-grid">
-<div class="summary-card"><div class="summary-card-icon">🏢</div><div><span>Proveedores</span><strong id="totalProveedores">0</strong></div></div>
-<div class="summary-card"><div class="summary-card-icon">👥</div><div><span>Trabajadores</span><strong id="totalTrabajadores">0</strong></div></div>
-<div class="summary-card"><div class="summary-card-icon">📦</div><div><span>Cajas</span><strong id="totalCajas">0</strong></div></div>
-<div class="summary-card"><div class="summary-card-icon">💳</div><div><span>Pensión</span><strong id="totalPension">0</strong></div></div>
-<div class="summary-card"><div class="summary-card-icon">🔑</div><div><span>Claves</span><strong id="totalClaves">0</strong></div></div>
+<div id="resumenCostosVacio" class="resumen-costos-vacio">
+<div>▦</div><strong>Aún no hay información para analizar</strong>
+<p>Pega un rango en Carga de archivos para generar este resumen.</p>
+</div>
+<div id="dashboardCostos" class="dashboard-costos hidden">
+<div id="avisoResumenCostos" class="resumen-aviso hidden"></div>
+<div class="vistas-resumen" role="tablist" aria-label="Vistas de resumen">
+<button class="vista-resumen active" type="button" data-resumen="tablas">Tablas</button>
+<button class="vista-resumen" type="button" data-resumen="categorias">Categorías</button>
+<button class="vista-resumen" type="button" data-resumen="balance">Balance</button>
+<label class="selector-archivo-resumen"><span>Archivo</span><select id="selectorArchivoResumen"></select></label>
+</div>
+<div id="vistaResumenTablas" class="contenido-vista-resumen">
+<div id="tablasCuentasCostos" class="tablas-cuentas-costos"></div>
+</div>
+<div id="vistaResumenCategorias" class="contenido-vista-resumen hidden">
+<div class="comparativa-categorias">
+<div class="comparativa-item ingreso"><div class="barra-costo-cabecera"><span>TOTAL INGRESOS</span><strong id="totalComparativaIngresos">$0,00</strong></div><div class="barra-costo-pista"><div id="barraComparativaIngresos" class="barra-costo-relleno"></div></div></div>
+<div class="comparativa-item egreso"><div class="barra-costo-cabecera"><span>TOTAL GASTOS</span><strong id="totalComparativaGastos">$0,00</strong></div><div class="barra-costo-pista"><div id="barraComparativaGastos" class="barra-costo-relleno"></div></div></div>
+</div>
+<div class="contenedores-categorias">
+<article class="panel-resumen-costos"><div class="panel-resumen-titulo"><div><strong>Ingresos</strong><span>De mayor a menor</span></div></div><div id="graficoIngresosCategorias" class="grafico-costos"></div></article>
+<article class="panel-resumen-costos"><div class="panel-resumen-titulo"><div><strong>Gastos</strong><span>De mayor a menor</span></div></div><div id="totalGastosCategoria" class="total-categoria-gastos"></div><div id="graficoGastosCategorias" class="grafico-costos"></div></article>
+</div>
+</div>
+<div id="vistaResumenBalance" class="contenido-vista-resumen hidden">
+<div class="metricas-costos">
+<article class="metrica-costos ingreso"><span>Ingresos · Código 4</span><strong id="resumenIngresos">$0,00</strong><small id="cantidadIngresos">0 cuentas</small></article>
+<article class="metrica-costos egreso"><span>Egresos · Código 5</span><strong id="resumenEgresos">$0,00</strong><small id="cantidadEgresos">0 cuentas</small></article>
+<article class="metrica-costos balance"><span>Resultado</span><strong id="resumenResultado">$0,00</strong><small>Ingresos menos egresos</small></article>
+</div>
+<article class="panel-resumen-costos">
+<div class="panel-resumen-titulo"><div><strong>Composición financiera</strong><span>Participación de ingresos y egresos</span></div></div>
+<div id="graficoComposicion" class="composicion-costos"></div>
+<div id="leyendaComposicion" class="leyenda-composicion"></div>
+</article>
+</div>
 </div>
 </section>
 <section id="paginaDirectorio" class="page active">
@@ -77,6 +109,7 @@
 <button id="limpiarBusqueda" class="clear-search">×</button>
 </div>
 <button id="btnNuevoRegistro" class="btn-new"><span>＋</span><span>Nuevo registro</span></button>
+<button id="btnPegarExcel" class="btn-new" type="button"><span>⎘</span><span>Pegar desde Excel</span></button>
 <button id="btnImportar" class="btn-import"><span>↑</span><span>Importar Excel</span></button>
 <input id="inputExcel" type="file" accept=".xlsx,.xls" hidden>
 </div>
@@ -100,6 +133,7 @@
 <h3>Esta vista está vacía</h3>
 <p>Importa un archivo Excel para comenzar a mostrar información.</p>
 <button id="btnImportarVacio" class="btn-secondary"><span>↑</span>Importar Excel</button>
+<button id="btnPegarExcelVacio" class="btn-secondary" type="button">⎘ Pegar desde Excel</button>
 <div class="excel-condition"><span>ⓘ</span>Los encabezados del archivo deben comenzar desde la celda A1.</div>
 </div>
 <div id="noResults" class="empty-state hidden">
@@ -115,6 +149,27 @@
 <button id="btnAgregarColumna" class="footer-action"><span>＋</span> Columna</button>
 </div>
 <span class="footer-info">Arrastra filas o columnas para ordenarlas</span>
+</div>
+</div>
+</section>
+<section id="paginaCentrosCostos" class="page">
+<div class="page-heading">
+<div class="page-icon">📂</div>
+<div><h1>Carga de archivos</h1><p>Almacena y organiza varios rangos de información.</p></div>
+</div>
+<div class="pestanas-archivos"><div id="listaVistasArchivos" class="lista-vistas-archivos"></div><button id="agregarVistaArchivo" class="agregar-vista-archivo" type="button" title="Agregar vista">＋</button></div>
+<div id="panelCentrosCostos" class="costos-dropzone" tabindex="0" role="button" aria-label="Arrastra o pega aquí tus rangos de Excel">
+<div class="costos-dropzone-icon">＋</div>
+<strong>Arrastra o Pega aquí tus rangos</strong>
+<span>Copia las celdas desde Excel y presiona Ctrl + V</span>
+</div>
+<div id="vistaCentrosCostos" class="costos-resultados hidden">
+<div class="costos-resultados-barra">
+<strong id="resumenCentrosCostos">0 filas</strong>
+<button id="limpiarCentrosCostos" type="button">Limpiar</button>
+</div>
+<div class="costos-tabla-scroll">
+<table id="tablaCentrosCostos"><thead></thead><tbody></tbody></table>
 </div>
 </div>
 </section>
@@ -141,6 +196,18 @@
 <button class="btn-confirmar-acceso" type="submit">Entrar</button>
 </div>
 </form>
+</div>
+<div id="modalPegarExcel" class="mini-modal hidden">
+<div class="mini-modal-box pegar-excel-box">
+<div class="mini-modal-title">Pegar desde Excel</div>
+<p class="pegar-excel-texto">Copia un rango con encabezados en la primera fila y pégalo aquí. Se agregará a la vista actual.</p>
+<textarea id="textoPegarExcel" placeholder="Pega aquí con Ctrl+V" aria-label="Datos copiados de Excel"></textarea>
+<p id="errorPegarExcel" class="pegar-excel-error" aria-live="polite"></p>
+<div class="mini-modal-actions">
+<button id="cancelarPegarExcel" type="button">Cancelar</button>
+<button id="confirmarPegarExcel" class="btn-confirmar-acceso" type="button">Agregar datos</button>
+</div>
+</div>
 </div>
 <div id="toast" class="toast">
 <div id="toastIcon" class="toast-icon">✓</div>
