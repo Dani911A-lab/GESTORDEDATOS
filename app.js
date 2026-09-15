@@ -45,9 +45,7 @@ $("#archivoImportarContenido").addEventListener("change",importarContenido);
 $$('.vista-resumen').forEach(b=>b.addEventListener('click',()=>cambiarVistaResumen(b.dataset.resumen)));
 $("#selectorArchivoResumen").addEventListener("change",e=>{archivoResumenActual=e.target.value;actualizarResumen()});
 $("#btnImprimirBalance").addEventListener("click",abrirReporte);
-$("#cancelarReporte").addEventListener("click",()=>$("#modalReporte").classList.add("hidden"));
-$("#modalReporte").addEventListener("click",e=>{if(e.target.id==="modalReporte")e.currentTarget.classList.add("hidden")});
-$("#formReporte").addEventListener("submit",imprimirReporteGerencial);
+['empresaArchivo','contratoArchivo','proyectoArchivo','plazoArchivo','montoArchivo'].forEach(id=>$("#"+id).addEventListener('input',guardarDatosReporteArchivo));
 $$(".tab").forEach(tab=>tab.addEventListener("click",()=>cambiarVista(tab.dataset.vista)));
 $$(".menu-item").forEach(item=>item.addEventListener("click",()=>cambiarPagina(item.dataset.page)));
 $("#btnImportar").addEventListener("click",()=>inputExcel.click());
@@ -194,6 +192,23 @@ guardarArchivosCarga();renderVistasArchivos();mostrarVistaArchivoActual();actual
 }
 function guardarArchivosCarga(){localStorage.setItem("archivos_carga",JSON.stringify(archivosCarga))}
 function archivoCargaActual(){return archivosCarga.find(a=>a.id===vistaArchivoActual)}
+function cargarDatosReporteArchivo(){
+const archivo=archivoCargaActual()||{};
+$("#empresaArchivo").value=archivo.empresa||'';
+$("#contratoArchivo").value=archivo.contrato||'';
+$("#proyectoArchivo").value=archivo.proyecto||'';
+$("#plazoArchivo").value=archivo.plazo||'';
+$("#montoArchivo").value=archivo.monto||'';
+}
+function guardarDatosReporteArchivo(){
+const archivo=archivoCargaActual();if(!archivo)return;
+archivo.empresa=$("#empresaArchivo").value.trim();
+archivo.contrato=$("#contratoArchivo").value.trim();
+archivo.proyecto=$("#proyectoArchivo").value.trim();
+archivo.plazo=$("#plazoArchivo").value.trim();
+archivo.monto=$("#montoArchivo").value.trim();
+guardarArchivosCarga();
+}
 function agregarVistaArchivo(){
 const numero=archivosCarga.length+1;const archivo={id:`archivo_${Date.now()}_${Math.random().toString(36).slice(2)}`,nombre:`Vista ${numero}`,matriz:[]};
 archivosCarga.push(archivo);vistaArchivoActual=archivo.id;guardarArchivosCarga();renderVistasArchivos();mostrarVistaArchivoActual();actualizarSelectorArchivos();
@@ -211,7 +226,7 @@ lista.appendChild(boton);
 }
 function mostrarVistaArchivoActual(){
 const archivo=archivoCargaActual();
-if(archivo?.matriz?.length){mostrarTablaCentrosCostos(archivo.matriz,false);return}
+if(archivo?.matriz?.length){cargarDatosReporteArchivo();mostrarTablaCentrosCostos(archivo.matriz,false);return}
 $("#tablaCentrosCostos thead").innerHTML="";$("#tablaCentrosCostos tbody").innerHTML="";$("#vistaCentrosCostos").classList.add("hidden");
 const panel=$("#panelCentrosCostos");panel.classList.remove("recibido","compacto");panel.querySelector("strong").textContent="Arrastra o Pega aquí tus rangos";panel.querySelector("span").textContent="Copia las celdas desde Excel y presiona Ctrl + V";
 }
@@ -271,7 +286,7 @@ panel.classList.add("recibido");
 panel.classList.add("compacto");
 panel.querySelector("strong").textContent="Arrastra o pega otro rango";
 panel.querySelector("span").textContent="El nuevo rango reemplazará esta tabla";
-if(guardar){const archivo=archivoCargaActual();if(archivo){archivo.matriz=matriz;archivoResumenActual=archivo.id;guardarArchivosCarga();actualizarSelectorArchivos()}}
+if(guardar){const archivo=archivoCargaActual();if(archivo){archivo.matriz=matriz;archivoResumenActual=archivo.id;guardarArchivosCarga();actualizarSelectorArchivos()}cargarDatosReporteArchivo()}
 actualizarResumen();
 if(guardar)mostrarToast("Rango recibido",`${cuerpo.length} filas y ${columnasRango} columnas.`,true);
 }
@@ -820,38 +835,63 @@ else if(texto.includes(","))texto=/,\d{1,2}$/.test(texto)?texto.replace(",",".")
 const numero=Number(texto);return Number.isFinite(numero)?(negativo?-numero:numero):NaN;
 }
 function formatearDinero(valor){return new Intl.NumberFormat("es-EC",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2}).format(valor||0)}
-function abrirReporte(){
+async function abrirReporte(){
 const archivo=archivosCarga.find(a=>a.id===archivoResumenActual);
 if(!archivo?.matriz?.length){mostrarToast('Sin información','Selecciona un archivo cargado para imprimir.',false);return}
-const headers=archivo.matriz[0].map(normalizar);
-const empresaCol=headers.findIndex(h=>h==='empresa'||h==='compania'||h==='razon social');
-const nombreEmpresa=empresaCol>=0?archivo.matriz.slice(1).map(f=>String(f[empresaCol]??'').trim()).find(Boolean):'';
-$("#empresaReporte").value=nombreEmpresa||localStorage.getItem('nombre_empresa_reporte')||'';
-$("#proyectoReporte").value='';
-$("#modalReporte").classList.remove('hidden');
-setTimeout(()=>$(nombreEmpresa?'#proyectoReporte':'#empresaReporte').focus(),0);
-}
-function imprimirReporteGerencial(e){
-e.preventDefault();
-const empresa=$("#empresaReporte").value.trim(),proyecto=$("#proyectoReporte").value.trim();
-if(!empresa||!proyecto)return;
-const archivo=archivosCarga.find(a=>a.id===archivoResumenActual);
-if(!archivo?.matriz?.length)return;
-localStorage.setItem('nombre_empresa_reporte',empresa);
-construirReporteGerencial(archivo,empresa,proyecto);
-$("#modalReporte").classList.add('hidden');
+if(!archivo.empresa||!archivo.contrato||!archivo.proyecto||!archivo.plazo||!archivo.monto){mostrarToast('Datos incompletos','Completa Empresa, Contrato Nro., Proyecto, Plazo y Monto en Carga de archivos.',false);return}
+construirReporteGerencial(archivo);
+const logos=[...$("#reporteImpresion").querySelectorAll('.reporte-logo')];
+await Promise.all(logos.map(logo=>logo.decode?logo.decode().catch(()=>{}):Promise.resolve()));
 requestAnimationFrame(()=>window.print());
 }
 function nodoReporte(etiqueta,clase,texto){const n=document.createElement(etiqueta);if(clase)n.className=clase;if(texto!==undefined)n.textContent=texto;return n}
-function construirReporteGerencial(archivo,empresa,proyecto){
+function agregarLogoReporte(cabecera){
+const logo=nodoReporte('img','reporte-logo');logo.src='img/logo.png';logo.alt='Logo de la empresa';
+logo.onerror=()=>logo.remove();cabecera.prepend(logo);
+}
+function porcentajeReporte(valor,total){return total?`${(valor/total*100).toFixed(1)} %`:'0,0 %'}
+function construirAnalisisGerencial(destino,archivo,datos,estructura){
+const hoja=nodoReporte('section','reporte-analisis');
+const cabecera=nodoReporte('header','reporte-analisis-cabecera');
+agregarLogoReporte(cabecera);
+cabecera.append(nodoReporte('div','reporte-marca','ANÁLISIS GERENCIAL'),nodoReporte('h1','', 'Lectura ejecutiva de gastos'));
+cabecera.append(nodoReporte('p','',`${archivo.empresa} · ${archivo.proyecto} · ${archivo.nombre}`));hoja.appendChild(cabecera);
+const gastos=[...estructura.cuentas.entries()].filter(([nombre])=>estructura.tipos.get(nombre)==='5').map(([nombre,subs])=>({nombre,total:[...subs.values()].flat().reduce((s,d)=>s+Math.abs(d.valor),0),subs})).sort((a,b)=>b.total-a.total);
+const totalGastos=datos.egresos,ingresos=datos.ingresos,resultado=ingresos-totalGastos;
+const montoProyecto=Math.abs(numeroContable(archivo.monto));
+const porcentajeMonto=valor=>Number.isFinite(montoProyecto)&&montoProyecto>0?porcentajeReporte(valor,montoProyecto):'No disponible';
+const kpis=nodoReporte('div','reporte-analisis-kpis');
+[['Porcentaje del gasto mayor',porcentajeReporte(gastos[0]?.total||0,totalGastos)],['Ingresos sobre monto del proyecto',porcentajeMonto(ingresos)],['Gastos sobre monto del proyecto',porcentajeMonto(totalGastos)]].forEach(([etiqueta,valor])=>{const caja=nodoReporte('div','reporte-analisis-kpi');caja.append(nodoReporte('span','',etiqueta),nodoReporte('strong','',valor));kpis.appendChild(caja)});hoja.appendChild(kpis);
+const lectura=nodoReporte('div','reporte-analisis-lectura');
+if(!totalGastos)lectura.textContent='No hay gastos clasificados para analizar en el archivo seleccionado.';
+else{
+const lider=gastos[0];
+lectura.textContent=`La cuenta de mayor peso es ${lider.nombre}: ${formatearDinero(lider.total)}, equivalente al ${porcentajeReporte(lider.total,totalGastos)} del gasto. Los ingresos representan ${porcentajeMonto(ingresos)} del monto del proyecto y los gastos ${porcentajeMonto(totalGastos)}. ${ingresos?`Por cada $1,00 de ingreso se gastan $${(totalGastos/ingresos).toFixed(2)}.`:'Sin ingresos clasificados, no es posible calcular la relación gasto/ingreso.'}`;
+}hoja.appendChild(lectura);
+const detallesPrincipales=gastos.flatMap(cuenta=>[...cuenta.subs.entries()].map(([subcuenta,detalles])=>{
+const detalle=[...detalles].sort((a,b)=>Math.abs(b.valor)-Math.abs(a.valor))[0];
+return{principal:cuenta.nombre,subcuenta,detalle:detalle?.detalle||'',valor:Math.abs(detalle?.valor||0)};
+})).sort((a,b)=>b.valor-a.valor);
+const seccion=nodoReporte('section','reporte-analisis-seccion');seccion.appendChild(nodoReporte('h2','', 'Detalles de mayor gasto por subcuenta'));
+const tabla=nodoReporte('table','reporte-analisis-tabla');const thead=nodoReporte('thead','');const encabezado=nodoReporte('tr','');
+['Subcuenta','Detalle de mayor valor','Monto','% del gasto'].forEach(t=>encabezado.appendChild(nodoReporte('th','',t)));thead.appendChild(encabezado);const tbody=nodoReporte('tbody','');
+detallesPrincipales.slice(0,6).forEach(item=>{const fila=nodoReporte('tr','');fila.append(nodoReporte('td','',item.subcuenta),nodoReporte('td','',item.detalle),nodoReporte('td','reporte-analisis-numero',formatearDinero(item.valor)),nodoReporte('td','reporte-analisis-numero',porcentajeReporte(item.valor,totalGastos)));tbody.appendChild(fila)});
+tabla.append(thead,tbody);seccion.appendChild(tabla);hoja.appendChild(seccion);
+if(detallesPrincipales.length){const destacada=detallesPrincipales[0];const foco=nodoReporte('div','reporte-analisis-foco');foco.append(nodoReporte('strong','', 'Foco de revisión'),nodoReporte('p','',`${destacada.detalle}, dentro de ${destacada.subcuenta}, es el detalle individual más alto: ${formatearDinero(destacada.valor)} (${porcentajeReporte(destacada.valor,totalGastos)} del gasto). Revisar este rubro primero puede tener mayor impacto en el control de costos.`));hoja.appendChild(foco)}
+const estado=nodoReporte('div','reporte-analisis-estado');estado.append(nodoReporte('strong','',resultado>=0?'Resultado positivo':'Resultado negativo'),nodoReporte('p','',resultado>=0?`El excedente representa ${porcentajeReporte(resultado,ingresos)} de los ingresos.`:`El gasto supera a los ingresos por ${formatearDinero(Math.abs(resultado))}. Conviene revisar las cuentas de mayor peso antes de comprometer nuevos recursos.`));hoja.appendChild(estado);
+hoja.appendChild(nodoReporte('p','reporte-analisis-fuente','Análisis descriptivo del archivo seleccionado. Participaciones calculadas sobre el gasto clasificado; no se infieren tendencias ni variaciones sin datos de períodos comparables.'));
+destino.appendChild(hoja);
+}
+function construirReporteGerencial(archivo){
 const destino=$("#reporteImpresion");destino.innerHTML='';
 const datos=analizarCentrosCostos(archivo.matriz);
 const estructura=cuentasParaTablas(archivo.matriz);
 const cabecera=nodoReporte('header','reporte-cabecera');
+agregarLogoReporte(cabecera);
 const marca=nodoReporte('div','reporte-marca','GESTIÓN EMPRESARIAL');
-const titulo=nodoReporte('h1','', 'Reporte gerencial de costos');
+const titulo=nodoReporte('h1','', 'REPORTE GERENCIAL DE COSTOS');
 const metadatos=nodoReporte('div','reporte-metadatos');
-[['Empresa',empresa],['Proyecto',proyecto],['Archivo',archivo.nombre],['Fecha',new Intl.DateTimeFormat('es-EC',{dateStyle:'long'}).format(new Date())]].forEach(([label,valor])=>{const p=nodoReporte('p','');p.append(nodoReporte('strong','',label+': '),document.createTextNode(valor));metadatos.appendChild(p)});
+[['Empresa',archivo.empresa],['Contrato Nro.',archivo.contrato],['Proyecto',archivo.proyecto],['Plazo',archivo.plazo],['Fecha',new Intl.DateTimeFormat('es-EC',{dateStyle:'long'}).format(new Date())],['Monto',archivo.monto]].forEach(([label,valor])=>{const p=nodoReporte('p','');p.append(nodoReporte('strong','',label+': '),document.createTextNode(valor));metadatos.appendChild(p)});
 cabecera.append(marca,titulo,metadatos);destino.appendChild(cabecera);
 const kpis=nodoReporte('section','reporte-kpis');
 [['Ingresos',datos.ingresos,'ingreso'],['Gastos',datos.egresos,'gasto'],['Resultado',datos.ingresos-datos.egresos,'resultado']].forEach(([label,valor,tipo])=>{const caja=nodoReporte('div',`reporte-kpi ${tipo}`);caja.append(nodoReporte('span','',label),nodoReporte('strong','',formatearDinero(valor)));kpis.appendChild(caja)});destino.appendChild(kpis);
@@ -879,6 +919,7 @@ tabla.append(thead,tbody);bloque.append(nombre,tabla);seccion.appendChild(bloque
 const firmas=nodoReporte('footer','reporte-firmas');
 [['Contadora','Elaborado'],['Gerente','Revisado']].forEach(([cargo,estado])=>{const firma=nodoReporte('div','reporte-firma');firma.append(nodoReporte('div','reporte-linea'),nodoReporte('strong','',cargo),nodoReporte('span','',estado));firmas.appendChild(firma)});
 destino.appendChild(firmas);
+construirAnalisisGerencial(destino,archivo,datos,estructura);
 }
 function renderGraficoCategorias(categorias,ingresos,egresos){
 const grupos=[["4","#graficoIngresosCategorias"],["5","#graficoGastosCategorias"]];
@@ -914,9 +955,10 @@ pistaTotal.appendChild(rellenoTotal);grupo.appendChild(pistaTotal);
 cuenta.subcuentas.sort((a,b)=>b.valor-a.valor).forEach(c=>{
 const item=document.createElement("div");item.className=`barra-costo ${c.tipo==="4"?"ingreso":c.tipo==="5"?"egreso":"desconocido"}`;
 const cabecera=document.createElement("div");cabecera.className="barra-costo-cabecera";
-const nombre=document.createElement("span");nombre.textContent=c.nombre;nombre.title=c.nombre;
-const partes=c.nombre.match(/^(.*?)(\s*\([^()]+\))$/);
-if(partes){nombre.textContent=partes[1];const detalle=document.createElement("strong");detalle.className="nombre-categoria-detalle";detalle.textContent=partes[2];nombre.appendChild(detalle)}
+const nombre=document.createElement("span");
+nombre.className="nombre-categoria-detalle";
+nombre.textContent=c.subcuenta||c.nombre.match(/\(([^()]+)\)\s*$/)?.[1]||c.nombre;
+nombre.title=nombre.textContent;
 const valor=document.createElement("strong");valor.textContent=formatearDinero(c.valor);
 cabecera.append(nombre,valor);
 const pista=document.createElement("div");pista.className="barra-costo-pista";
