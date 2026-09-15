@@ -41,7 +41,7 @@ button{color:inherit}
 .menu-opciones-contenido{position:absolute;right:0;top:35px;min-width:190px;padding:5px;border:1px solid var(--border-dark);border-radius:7px;background:#fff;box-shadow:var(--shadow);z-index:40}
 .menu-opciones-contenido button{width:100%;height:32px;padding:0 9px;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;gap:8px;text-align:left;cursor:pointer;font-size:11px;white-space:nowrap}
 .menu-opciones-contenido button:hover{background:var(--hover)}.menu-opciones-contenido button span{font-size:15px}
-.nombre-categoria-detalle{font-weight:700;color:#1f1f1f}
+.nombre-categoria-detalle{font-weight:400;color:#1f1f1f}
 .page{display:none;max-width:1700px;margin:0 auto;padding:52px 2.5% 80px}
 .page.active{display:block}
 .page-heading{display:flex;align-items:flex-start;gap:14px;margin-bottom:28px}
@@ -63,6 +63,10 @@ button{color:inherit}
 .costos-dropzone.compacto{min-height:115px;margin-bottom:14px}
 .costos-dropzone.compacto .costos-dropzone-icon{display:none}
 .costos-resultados{width:100%;border:1px solid var(--border);border-radius:7px;background:#fff;overflow:hidden}
+.datos-reporte-archivo{display:grid;grid-template-columns:minmax(180px,1.35fr) minmax(180px,1.35fr) minmax(120px,.7fr) minmax(140px,.8fr);gap:9px;padding:11px 10px;background:#fafafa;border-bottom:1px solid var(--border)}
+.datos-reporte-archivo label{display:flex;flex-direction:column;gap:5px;color:#777673;font-size:9px;font-weight:700;letter-spacing:.04em}
+.datos-reporte-archivo input{width:100%;height:31px;border:1px solid var(--border-dark);border-radius:5px;background:#fff;padding:0 8px;color:var(--text);font-size:11px;font-weight:400;letter-spacing:0;outline:none}
+.datos-reporte-archivo input:focus{border-color:#aaa9a6;box-shadow:0 0 0 1px #aaa9a6}
 .costos-resultados-barra{min-height:42px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted)}
 .costos-resultados-barra strong{font-weight:500;color:var(--text)}
 .costos-resultados-barra button{height:27px;padding:0 9px;border:1px solid var(--border-dark);border-radius:5px;background:#fff;cursor:pointer;font-size:11px}
@@ -203,12 +207,15 @@ th.action-column{background:#fafafa!important;z-index:8}
 .grafico-costos{display:flex;flex-direction:column;gap:13px}.barra-costo-cabecera{display:flex;justify-content:space-between;gap:12px;margin-bottom:5px;font-size:11px}.barra-costo-cabecera span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.barra-costo-cabecera strong{font-size:10px;white-space:nowrap}.barra-costo-pista{height:8px;border-radius:99px;background:#f0f0ee;overflow:hidden}.barra-costo-relleno{height:100%;min-width:2px;border-radius:99px;background:#d36a62}.barra-costo.ingreso .barra-costo-relleno{background:#3d9b68}
 .composicion-costos{width:178px;height:178px;border-radius:50%;margin:28px auto 23px;position:relative;background:#eee}.composicion-costos:after{content:"";position:absolute;inset:33px;border-radius:50%;background:#fff}
 .barra-costo.desconocido .barra-costo-relleno{background:#9b9a97}
-.grupo-categoria{padding:12px;border:1px solid var(--border);border-radius:7px;background:#fbfbfa}
+.grupo-categoria{padding:12px;border:1px solid #cfceca;border-radius:7px;background:#fbfbfa;box-shadow:0 5px 16px rgba(15,15,15,.11)}
 .grupo-categoria-encabezado{display:flex;justify-content:space-between;gap:12px;margin-bottom:9px;font-size:11px;color:var(--text)}
+.grupo-categoria-encabezado strong:first-child{font-size:13px;font-weight:700}
 .grupo-categoria-encabezado strong:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}
 .grupo-categoria .barra-principal-pista{height:10px;margin-bottom:15px}
 .grupo-categoria.ingreso .barra-principal-pista .barra-costo-relleno{background:#3d9b68}
 .grupo-categoria.egreso .barra-principal-pista .barra-costo-relleno{background:#d36a62}
+.grupo-categoria.ingreso .barra-costo .barra-costo-relleno{background:#78b891}
+.grupo-categoria.egreso .barra-costo .barra-costo-relleno{background:#e29a94}
 .grupo-categoria .barra-costo+.barra-costo{margin-top:12px}
 .comparativa-categorias{display:grid;grid-template-columns:1fr;gap:14px;border:1px solid #d8d7d3;border-radius:9px;background:#efefed;padding:16px}
 .comparativa-item .barra-costo-cabecera{font-weight:600;margin-bottom:9px}.comparativa-item .barra-costo-pista{height:13px}.comparativa-item.ingreso .barra-costo-relleno{background:#3d9b68}.comparativa-item.egreso .barra-costo-relleno{background:#d36a62}
@@ -222,8 +229,6 @@ th.action-column{background:#fafafa!important;z-index:8}
 .accion-imprimir-balance{display:flex;justify-content:flex-end;margin-top:14px}
 .accion-imprimir-balance button{height:32px;padding:0 13px;border:1px solid #37352f;border-radius:6px;background:#37352f;color:#fff;font-size:11px;font-weight:600;cursor:pointer}
 .accion-imprimir-balance button:hover{background:#55544f}
-.reporte-form-texto{margin:0 0 13px;color:var(--muted);font-size:11px}
-.reporte-form-label{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;font-size:11px;font-weight:600}
 #reporteImpresion{display:none}
 @media print{
 @page{size:A4;margin:14mm 13mm}
@@ -231,6 +236,7 @@ html,body{width:auto;height:auto;margin:0;background:#fff;color:#252522;font-siz
 .app,.mini-modal,.toast{display:none!important}
 #reporteImpresion{display:block!important;font-family:Arial,Helvetica,sans-serif;color:#252522}
 .reporte-cabecera{padding-bottom:12px;border-bottom:2px solid #37352f;margin-bottom:14px}
+.reporte-logo{float:right;max-width:42mm;max-height:22mm;width:auto;height:auto;object-fit:contain;margin:0 0 5mm 8mm}
 .reporte-marca{font-size:9px;font-weight:700;letter-spacing:.16em;color:#787774}
 .reporte-cabecera h1{font-size:22px;letter-spacing:-.02em;margin:6px 0 10px}
 .reporte-metadatos{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px}.reporte-metadatos p{margin:0;font-size:9px}
@@ -255,6 +261,21 @@ html,body{width:auto;height:auto;margin:0;background:#fff;color:#252522;font-siz
 .reporte-sin-datos{font-size:9px;color:#787774}
 .reporte-firmas{display:grid;grid-template-columns:1fr 1fr;gap:55px;margin-top:38px;break-inside:avoid-page}
 .reporte-firma{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px}.reporte-linea{width:100%;border-top:1px solid #37352f;margin-bottom:5px}.reporte-firma span{font-size:9px;color:#787774}
+.reporte-analisis{break-before:page;page-break-before:always;break-inside:avoid-page;page-break-inside:avoid;max-height:265mm;font-size:10px}
+.reporte-analisis-cabecera{min-height:27mm;border-bottom:2px solid #37352f;margin-bottom:10px;padding-bottom:8px}
+.reporte-analisis-cabecera h1{font-size:21px;margin:5px 0 6px;letter-spacing:-.02em}
+.reporte-analisis-cabecera p{font-size:9px;color:#787774;margin:0}
+.reporte-analisis-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 11px}
+.reporte-analisis-kpi{display:flex;flex-direction:column;gap:4px;border:1px solid #dededb;border-top:3px solid #d36a62;background:#fafafa;padding:9px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.reporte-analisis-kpi span{font-size:8px;color:#787774}.reporte-analisis-kpi strong{font-size:14px;font-variant-numeric:tabular-nums}
+.reporte-analisis-lectura{padding:10px 12px;background:#f5f5f3;border-left:3px solid #d36a62;line-height:1.45;margin-bottom:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.reporte-analisis-seccion h2{font-size:12px;margin:0 0 7px}.reporte-analisis-tabla{width:100%;border-collapse:collapse;font-size:9px}
+.reporte-analisis-tabla th{background:#efefed;text-align:left;padding:6px 8px;border-bottom:1px solid #cfceca;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.reporte-analisis-tabla td{padding:6px 8px;border-bottom:1px solid #e8e8e5}.reporte-analisis-numero{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.reporte-analisis-otros td{background:#f7f7f5;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.reporte-analisis-foco,.reporte-analisis-estado{margin-top:12px;padding:9px 11px;border:1px solid #dededb;break-inside:avoid}
+.reporte-analisis-foco strong,.reporte-analisis-estado strong{font-size:10px}.reporte-analisis-foco p,.reporte-analisis-estado p{margin:5px 0 0;line-height:1.4;font-size:9px}
+.reporte-analisis-fuente{margin:13px 0 0;color:#787774;font-size:8px;line-height:1.4}
 }
 @media(max-width:900px){.resumen-costos-grid{grid-template-columns:1fr}.metricas-costos{grid-template-columns:1fr}}
 .mini-modal{position:fixed;inset:0;background:rgba(15,15,15,.15);display:flex;align-items:center;justify-content:center;z-index:200;padding:15px}
@@ -279,4 +300,5 @@ html,body{width:auto;height:auto;margin:0;background:#fff;color:#252522;font-siz
 .toast strong{font-size:12px}
 .toast p{font-size:10px;color:var(--muted);margin:2px 0 0}
 @media(max-width:1000px){.sidebar{width:205px;min-width:205px}.summary-grid{grid-template-columns:repeat(2,1fr)}.database-toolbar{align-items:flex-start;flex-direction:column}.toolbar-right{width:100%}.search{flex:1}}
+@media(max-width:850px){.datos-reporte-archivo{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.sidebar{width:54px;min-width:54px}.workspace-info,.sidebar-action,.menu-item span:last-child,.sidebar-title,.sidebar-small span:last-child,.user-info{display:none}.workspace{justify-content:center}.menu-item{justify-content:center;padding:0}.sidebar-section{padding:15px 8px}.sidebar-small{justify-content:center}.sidebar-footer{justify-content:center}.page{padding:28px 10px 60px}.page-heading{margin-bottom:18px}.page-heading h1{font-size:26px}.page-heading p{font-size:12px}.page-icon{font-size:31px}.tabs{margin-left:-2px;margin-right:-2px}.database-toolbar{padding:8px}.toolbar-left{width:100%;justify-content:space-between}.toolbar-right{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:6px}.search{grid-column:1/-1;width:100%}.btn-new,.btn-import{width:100%;justify-content:center;padding:0 6px}.btn-new span:last-child,.btn-import span:last-child{font-size:10px}.table-scroll{width:100%;overflow-x:auto}#tablaDatos{min-width:max-content}#tablaDatos th,#tablaDatos td{min-width:115px}.row-number{min-width:44px!important;width:44px!important}.action-column{min-width:58px!important;width:58px!important}.row-actions{opacity:.65}.footer-info{display:none}.table-footer{padding:4px 6px}.footer-left{width:100%}.footer-action{font-size:10px;padding:0 5px}.toast{left:12px;right:12px;bottom:12px;min-width:0}}
