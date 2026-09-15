@@ -1,0 +1,227 @@
+[
+  {
+    "EMPRESAS": "ARELECTRICA S.A.S.",
+    "USUARIO": "ARECONTAB1",
+    "CLAVE": "ARELECTRI2026$",
+    "CUENTA": 8058288,
+    "CTA AHORROS": "-",
+    "CTA AHORROS__1": "-",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "COSTAELEC S.A.",
+    "USUARIO": "COSTACONT1",
+    "CLAVE": "HUGOcueva2026$",
+    "CUENTA": 8035253,
+    "CTA AHORROS": 68943474,
+    "CTA AHORROS__1": 68943474,
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "CUEVA CAMACHO HUGO XAVIER",
+    "USUARIO": "CONTHC1",
+    "CLAVE": "Hucueva$2026",
+    "CUENTA": 8319022,
+    "CTA AHORROS": 7768494,
+    "CTA AHORROS__1": 7768494,
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "CUEVA CAMACHO HUGO XAVIER",
+    "USUARIO": "CONTAPHC26",
+    "CLAVE": "Ingeniero1",
+    "CUENTA": 7768494,
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "ELECTRICBALAO S A",
+    "USUARIO": "CONTBALAO1",
+    "CLAVE": "Balaohc2026",
+    "CUENTA": 8734348,
+    "CTA AHORROS": "-",
+    "CTA AHORROS__1": "-",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "ELECTRIHC SAS",
+    "USUARIO": "AUXIHC1",
+    "CLAVE": "CLAVE EN TABLET",
+    "CUENTA": 8055882,
+    "CTA AHORROS": "-",
+    "CTA AHORROS__1": "-",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "ELECTRIORIENTE S.A.S",
+    "USUARIO": "CONTAELEC1",
+    "CLAVE": "FINAN$2026",
+    "CUENTA": 8241422,
+    "CTA AHORROS": 68943377,
+    "CTA AHORROS__1": 68943377,
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "ENERGYTECH S.A.",
+    "USUARIO": "ENERGY2025",
+    "CLAVE": "ENERGY2026$$",
+    "CUENTA": 8391939,
+    "CTA AHORROS": 68933697,
+    "CTA AHORROS__1": 68933697,
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "PONCELECTRIC",
+    "USUARIO": "CONTARE25",
+    "CLAVE": "PONCELEC2026$",
+    "CUENTA": 8081476,
+    "CTA AHORROS": "-",
+    "CTA AHORROS__1": "-",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "SOUTHELECTRIC",
+    "USUARIO": "AUXISOUT1",
+    "CLAVE": "SOUThc2026",
+    "CUENTA": 8610509,
+    "CTA AHORROS": "-",
+    "CTA AHORROS__1": "-",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "TRANSPORTE DE CARGA PESADA GRUASHC S. A",
+    "USUARIO": "GRUACONTA1",
+    "CLAVE": "GRUAShc2026",
+    "CUENTA": 8266743,
+    "CTA AHORROS": 68943617,
+    "CTA AHORROS__1": 68943617,
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "CONSORCIO DELTA LED POWER",
+    "USUARIO": "CONTA33",
+    "CLAVE": "DELTALED2025$",
+    "CUENTA": 8546657,
+    "CTA AHORROS": "-",
+    "CTA AHORROS__1": "-",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "CONSORCIO ELECTRICO VOLTMASTERS",
+    "USUARIO": "VOLMASTER1",
+    "CLAVE": "AUXVOLM2026$",
+    "CUENTA": 8475741,
+    "CTA AHORROS": "-",
+    "CTA AHORROS__1": "-",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "CONSORCIO ELECTRICO PARTE ALTA II",
+    "USUARIO": "PARTALTA25",
+    "CLAVE": "PARTEALTA2025",
+    "CUENTA": 8615853,
+    "CTA AHORROS": "-",
+    "CTA AHORROS__1": "-",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "CONSORCIO POWER LOJA",
+    "USUARIO": "CONTPOWER1",
+    "CLAVE": "POWER2025$",
+    "CUENTA": 8677328,
+    "CTA AHORROS": "-",
+    "CTA AHORROS__1": "-",
+    "ESTADO": "ACTIVA"
+  },
+  {
+    "EMPRESAS": "",
+    "USUARIO": "",
+    "CLAVE": "",
+    "CUENTA": "",
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": ""
+  },
+  {
+    "EMPRESAS": "CONSORCIO ELECTRICO PARTE ALTA",
+    "USUARIO": "",
+    "CLAVE": "",
+    "CUENTA": "",
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": "INACTIVA"
+  },
+  {
+    "EMPRESAS": "CONSTRUCTORA ELECTRICA SMART GRID HC CIA. LTDA.",
+    "USUARIO": "",
+    "CLAVE": "",
+    "CUENTA": "",
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": "INACTIVA"
+  },
+  {
+    "EMPRESAS": "CUEVA CAMACHO JOHN GERARDO",
+    "USUARIO": "",
+    "CLAVE": "",
+    "CUENTA": "",
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": "INACTIVA"
+  },
+  {
+    "EMPRESAS": "ELECTRICA OROCON S.A",
+    "USUARIO": "",
+    "CLAVE": "",
+    "CUENTA": "",
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": "INACTIVA"
+  },
+  {
+    "EMPRESAS": "INMOVIELECTRIC C.A.",
+    "USUARIO": "",
+    "CLAVE": "",
+    "CUENTA": "",
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": "INACTIVA"
+  },
+  {
+    "EMPRESAS": "ENERGYTECH S.A.",
+    "USUARIO": "CONTAENER1",
+    "CLAVE": "ENERGY2026$",
+    "CUENTA": 1068933697,
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": "INACTIVA"
+  },
+  {
+    "EMPRESAS": "",
+    "USUARIO": "",
+    "CLAVE": "",
+    "CUENTA": "",
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": ""
+  },
+  {
+    "EMPRESAS": "",
+    "USUARIO": "",
+    "CLAVE": "",
+    "CUENTA": "",
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": ""
+  },
+  {
+    "EMPRESAS": "CUEVA CAMACHO HUGO XAVIER (cuenta personal)",
+    "USUARIO": "CONTAPHC26",
+    "CLAVE": "Ingeniero1",
+    "CUENTA": "",
+    "CTA AHORROS": "",
+    "CTA AHORROS__1": "",
+    "ESTADO": "INACTIVA"
+  }
+]

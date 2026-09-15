@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gestión Empresarial</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="workspace">
+<div class="workspace-icon">G</div>
+<div class="workspace-info">
+<strong>Gestión</strong>
+<span>Empresarial</span>
+</div>
+<button class="sidebar-action">•••</button>
+</div>
+<nav class="menu">
+<button class="menu-item" data-page="resumen"><span class="menu-icon">⌂</span><span>Resumen</span></button>
+<button class="menu-item active" data-page="directorio"><span class="menu-icon">◫</span><span>Directorio</span></button>
+</nav>
+<div class="sidebar-section">
+<div class="sidebar-title">ESPACIO DE TRABAJO</div>
+<div class="sidebar-small"><span>✦</span><span>Información empresarial</span></div>
+</div>
+<div class="sidebar-footer">
+<div class="user-avatar">D</div>
+<div class="user-info"><strong>Administrador</strong><span>Sistema empresarial</span></div>
+</div>
+</aside>
+<main class="main">
+<header class="topbar">
+<div class="breadcrumb"><span>Gestión empresarial</span><span class="breadcrumb-separator">/</span><strong id="breadcrumbActual">Directorio</strong></div>
+<div class="top-actions">
+<button class="icon-button" title="Ayuda">?</button>
+<button class="icon-button" title="Opciones">•••</button>
+</div>
+</header>
+<section id="paginaResumen" class="page">
+<div class="page-heading">
+<div class="page-icon">🏠</div>
+<div><h1>Resumen</h1><p>Vista general de tu información empresarial.</p></div>
+</div>
+<div class="summary-grid">
+<div class="summary-card"><div class="summary-card-icon">🏢</div><div><span>Proveedores</span><strong id="totalProveedores">0</strong></div></div>
+<div class="summary-card"><div class="summary-card-icon">👥</div><div><span>Trabajadores</span><strong id="totalTrabajadores">0</strong></div></div>
+<div class="summary-card"><div class="summary-card-icon">📦</div><div><span>Cajas</span><strong id="totalCajas">0</strong></div></div>
+<div class="summary-card"><div class="summary-card-icon">💳</div><div><span>Pensión</span><strong id="totalPension">0</strong></div></div>
+<div class="summary-card"><div class="summary-card-icon">🔑</div><div><span>Claves</span><strong id="totalClaves">0</strong></div></div>
+</div>
+</section>
+<section id="paginaDirectorio" class="page active">
+<div class="page-heading">
+<div class="page-icon">📚</div>
+<div><h1>Directorio</h1><p>Centraliza y consulta la información de tu organización.</p></div>
+</div>
+<div class="tabs">
+<button class="tab active" data-vista="proveedores"><span class="tab-icon">🏢</span><span>PROVEEDORES</span></button>
+<button class="tab" data-vista="trabajadores"><span class="tab-icon">👥</span><span>TRABAJADORES</span></button>
+<button class="tab" data-vista="cajas"><span class="tab-icon">📦</span><span>CAJAS</span></button>
+<button class="tab" data-vista="pension"><span class="tab-icon">💳</span><span>PENSIÓN</span></button>
+<button class="tab" data-vista="claves"><span class="tab-icon">🔑</span><span>CLAVES</span></button>
+</div>
+<div class="database">
+<div class="database-toolbar">
+<div class="toolbar-left">
+<div class="view-name"><span>▦</span><strong id="nombreVista">Proveedores</strong></div>
+<div class="counter" id="contadorRegistros">0 registros</div>
+</div>
+<div class="toolbar-right">
+<div class="search">
+<span>⌕</span>
+<input id="buscador" type="text" placeholder="Buscar en la tabla...">
+<button id="limpiarBusqueda" class="clear-search">×</button>
+</div>
+<button id="btnNuevoRegistro" class="btn-new"><span>＋</span><span>Nuevo registro</span></button>
+<button id="btnImportar" class="btn-import"><span>↑</span><span>Importar Excel</span></button>
+<input id="inputExcel" type="file" accept=".xlsx,.xls" hidden>
+</div>
+</div>
+<div id="excelInfo" class="excel-info hidden">
+<div class="excel-info-left">
+<span class="excel-success">✓</span>
+<div><strong id="excelNombre"></strong><span id="excelDetalle"></span></div>
+</div>
+<button id="cerrarExcelInfo">×</button>
+</div>
+<div class="table-wrapper">
+<div class="table-scroll" id="tableScroll">
+<table id="tablaDatos">
+<thead><tr id="tablaHead"></tr></thead>
+<tbody id="tablaBody"></tbody>
+</table>
+</div>
+<div id="emptyState" class="empty-state">
+<div class="empty-icon">▦</div>
+<h3>Esta vista está vacía</h3>
+<p>Importa un archivo Excel para comenzar a mostrar información.</p>
+<button id="btnImportarVacio" class="btn-secondary"><span>↑</span>Importar Excel</button>
+<div class="excel-condition"><span>ⓘ</span>Los encabezados del archivo deben comenzar desde la celda A1.</div>
+</div>
+<div id="noResults" class="empty-state hidden">
+<div class="empty-icon">⌕</div>
+<h3>Sin resultados</h3>
+<p>No encontramos registros que coincidan con tu búsqueda.</p>
+</div>
+<div class="table-footer">
+<div class="footer-left">
+<span id="footerRegistros">0 registros</span>
+<span class="footer-divider"></span>
+<button id="btnAgregarFilaFooter" class="footer-action"><span>＋</span> Fila</button>
+<button id="btnAgregarColumna" class="footer-action"><span>＋</span> Columna</button>
+</div>
+<span class="footer-info">Arrastra filas o columnas para ordenarlas</span>
+</div>
+</div>
+</section>
+</main>
+</div>
+<div id="modalColumna" class="mini-modal hidden">
+<div class="mini-modal-box">
+<div class="mini-modal-title">Nueva columna</div>
+<input id="inputNuevaColumna" type="text" placeholder="Nombre de la columna" maxlength="50">
+<div class="mini-modal-actions">
+<button id="cancelarColumna">Cancelar</button>
+<button id="guardarColumna">Agregar</button>
+</div>
+</div>
+</div>
+<div id="modalAccesoClaves" class="mini-modal hidden">
+<form id="formAccesoClaves" class="mini-modal-box acceso-claves-box">
+<div class="mini-modal-title">Acceso a Claves</div>
+<p class="acceso-claves-texto">Ingresa la contraseña para abrir esta vista.</p>
+<input id="inputAccesoClaves" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+<p id="errorAccesoClaves" class="acceso-claves-error" aria-live="polite"></p>
+<div class="mini-modal-actions">
+<button id="cancelarAccesoClaves" type="button">Cancelar</button>
+<button class="btn-confirmar-acceso" type="submit">Entrar</button>
+</div>
+</form>
+</div>
+<div id="toast" class="toast">
+<div id="toastIcon" class="toast-icon">✓</div>
+<div><strong id="toastTitulo">Listo</strong><p id="toastMensaje"></p></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
