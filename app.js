@@ -30,6 +30,13 @@ async function iniciar(){
 cargarLocalStorage();
 configurarEventos();
 cambiarVista("proveedores");
+if(typeof iniciarSupabase==="function")iniciarSupabase().catch(error=>{
+console.error("Supabase:",error);
+const boton=$("#btnSupabase");
+if(boton){boton.textContent="Error de conexión";boton.classList.add("error");boton.title=error.message}
+$("#errorSupabase").textContent=error.message;
+if(typeof mostrarToast==="function")mostrarToast("Error de Supabase",error.message,false);
+});
 await cargarTodosLosJSON();
 }
 function configurarEventos(){
@@ -190,7 +197,7 @@ vistaArchivoActual=archivosCarga[0].id;
 archivoResumenActual=archivosCarga.find(a=>a.matriz.length)?.id||vistaArchivoActual;
 guardarArchivosCarga();renderVistasArchivos();mostrarVistaArchivoActual();actualizarSelectorArchivos();
 }
-function guardarArchivosCarga(){localStorage.setItem("archivos_carga",JSON.stringify(archivosCarga))}
+function guardarArchivosCarga(){localStorage.setItem("archivos_carga",JSON.stringify(archivosCarga));if(typeof programarSincronizacionSupabase==="function")programarSincronizacionSupabase()}
 function archivoCargaActual(){return archivosCarga.find(a=>a.id===vistaArchivoActual)}
 function cargarDatosReporteArchivo(){
 const archivo=archivoCargaActual()||{};
@@ -986,6 +993,7 @@ function guardarLocalStorage(){
 localStorage.setItem("directorio_registros",JSON.stringify(registrosLocales));
 localStorage.setItem("directorio_columnas",JSON.stringify(columnas));
 localStorage.setItem("directorio_orden",JSON.stringify(ordenFilas));
+if(typeof programarSincronizacionSupabase==="function")programarSincronizacionSupabase();
 }
 function cargarLocalStorage(){
 try{
@@ -1044,6 +1052,7 @@ localStorage.setItem("archivos_carga",JSON.stringify(carga));
 localStorage.setItem("directorio_registros",JSON.stringify(contenido.datos.directorioRegistros));
 localStorage.setItem("directorio_columnas",JSON.stringify(contenido.datos.directorioColumnas));
 localStorage.setItem("directorio_orden",JSON.stringify(contenido.datos.directorioOrden));
+sessionStorage.setItem("supabase_importar_local","1");
 location.reload();
 }catch(error){mostrarToast("No se pudo importar",error.message,false)}
 }
