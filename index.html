@@ -6,6 +6,9 @@
 <title>Gestión Empresarial</title>
 <link rel="stylesheet" href="styles.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-sync.js"></script>
 </head>
 <body>
 <div class="app">
@@ -36,6 +39,7 @@
 <header class="topbar">
 <div class="breadcrumb"><span>Gestión empresarial</span><span class="breadcrumb-separator">/</span><strong id="breadcrumbActual">Directorio</strong></div>
 <div class="top-actions">
+<button id="btnSupabase" class="conexion-supabase" type="button" title="Estado de sincronización con Supabase">Conectando…</button>
 <button class="icon-button" title="Ayuda">?</button>
 <div class="opciones-contenido">
 <button id="btnOpcionesContenido" class="icon-button" type="button" title="Opciones" aria-label="Opciones de contenido" aria-expanded="false">•••</button>
@@ -223,6 +227,20 @@
 <button id="confirmarPegarExcel" class="btn-confirmar-acceso" type="button">Agregar datos</button>
 </div>
 </div>
+</div>
+<div id="modalSupabase" class="mini-modal hidden">
+<form id="formSupabase" class="mini-modal-box conexion-supabase-box">
+<div class="mini-modal-title">Conectar con la base de datos</div>
+<p id="estadoSupabase" class="conexion-supabase-texto">Ingresa con un usuario de Supabase.</p>
+<input id="emailSupabase" type="email" placeholder="Correo electrónico" autocomplete="email" required>
+<input id="passwordSupabase" type="password" placeholder="Contraseña" autocomplete="current-password" minlength="6" required>
+<p id="errorSupabase" class="acceso-claves-error" aria-live="polite"></p>
+<div class="mini-modal-actions">
+<button id="cerrarSupabase" type="button">Cerrar</button>
+<button id="crearUsuarioSupabase" type="button">Crear cuenta</button>
+<button class="btn-confirmar-acceso" type="submit">Entrar</button>
+</div>
+</form>
 </div>
 <div id="reporteImpresion"></div>
 <div id="toast" class="toast">
