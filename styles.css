@@ -36,6 +36,11 @@ button{color:inherit}
 .top-actions{display:flex;gap:3px}
 .icon-button{width:29px;height:29px;border:0;background:transparent;border-radius:5px;cursor:pointer;color:var(--muted)}
 .icon-button:hover{background:var(--hover)}
+.opciones-contenido{position:relative}
+.menu-opciones-contenido{position:absolute;right:0;top:35px;min-width:190px;padding:5px;border:1px solid var(--border-dark);border-radius:7px;background:#fff;box-shadow:var(--shadow);z-index:40}
+.menu-opciones-contenido button{width:100%;height:32px;padding:0 9px;border:0;border-radius:5px;background:transparent;display:flex;align-items:center;gap:8px;text-align:left;cursor:pointer;font-size:11px;white-space:nowrap}
+.menu-opciones-contenido button:hover{background:var(--hover)}.menu-opciones-contenido button span{font-size:15px}
+.nombre-categoria-detalle{font-weight:700;color:#1f1f1f}
 .page{display:none;max-width:1700px;margin:0 auto;padding:52px 2.5% 80px}
 .page.active{display:block}
 .page-heading{display:flex;align-items:flex-start;gap:14px;margin-bottom:28px}
