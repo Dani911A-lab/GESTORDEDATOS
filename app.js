@@ -18,6 +18,7 @@ let columnaArrastrada=null;
 let archivosCarga=[];
 let vistaArchivoActual=null;
 let archivoResumenActual=null;
+const ordenTablas=new Map();
 const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 const tabla=$("#tablaDatos");
@@ -36,12 +37,17 @@ const botonOpciones=$("#btnOpcionesContenido");
 const menuOpciones=$("#menuOpcionesContenido");
 botonOpciones.addEventListener("click",e=>{e.stopPropagation();const abierto=menuOpciones.classList.toggle("hidden");botonOpciones.setAttribute("aria-expanded",String(!abierto))});
 document.addEventListener("click",e=>{if(!e.target.closest(".opciones-contenido")){menuOpciones.classList.add("hidden");botonOpciones.setAttribute("aria-expanded","false")}});
+document.addEventListener("click",e=>{if(!e.target.closest('.organizacion-tabla'))$$('.organizacion-tabla-menu').forEach(m=>m.classList.add('hidden'))});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){menuOpciones.classList.add("hidden");botonOpciones.setAttribute("aria-expanded","false")}});
 $("#btnExportarContenido").addEventListener("click",exportarContenido);
 $("#btnImportarContenido").addEventListener("click",()=>$("#archivoImportarContenido").click());
 $("#archivoImportarContenido").addEventListener("change",importarContenido);
 $$('.vista-resumen').forEach(b=>b.addEventListener('click',()=>cambiarVistaResumen(b.dataset.resumen)));
 $("#selectorArchivoResumen").addEventListener("change",e=>{archivoResumenActual=e.target.value;actualizarResumen()});
+$("#btnImprimirBalance").addEventListener("click",abrirReporte);
+$("#cancelarReporte").addEventListener("click",()=>$("#modalReporte").classList.add("hidden"));
+$("#modalReporte").addEventListener("click",e=>{if(e.target.id==="modalReporte")e.currentTarget.classList.add("hidden")});
+$("#formReporte").addEventListener("submit",imprimirReporteGerencial);
 $$(".tab").forEach(tab=>tab.addEventListener("click",()=>cambiarVista(tab.dataset.vista)));
 $$(".menu-item").forEach(item=>item.addEventListener("click",()=>cambiarPagina(item.dataset.page)));
 $("#btnImportar").addEventListener("click",()=>inputExcel.click());
@@ -693,13 +699,35 @@ contenedor.appendChild(aviso);return;
 for(const [principal,subs] of cuentas){
 const tipo=tipos.get(principal)||'';
 const tarjeta=document.createElement('section');tarjeta.className=`tabla-cuenta-card ${tipo==='4'?'cuenta-ingreso':tipo==='5'?'cuenta-gasto':''}`;
-const titulo=document.createElement('div');titulo.className='tabla-cuenta-titulo';titulo.textContent=principal;
+const titulo=document.createElement('div');titulo.className='tabla-cuenta-titulo';
+const nombreTitulo=document.createElement('span');nombreTitulo.textContent=principal;
+const opciones=document.createElement('div');opciones.className='organizacion-tabla';
+const botonOrden=document.createElement('button');botonOrden.type='button';botonOrden.className='organizacion-tabla-boton';botonOrden.textContent='⋮';botonOrden.title='Organización de la tabla';botonOrden.setAttribute('aria-label',`Organización de ${principal}`);
+const menuOrden=document.createElement('div');menuOrden.className='organizacion-tabla-menu hidden';
+const tituloMenu=document.createElement('div');tituloMenu.className='organizacion-tabla-menu-titulo';tituloMenu.textContent='Organización';menuOrden.appendChild(tituloMenu);
+const claveOrden=`${archivoResumenActual||''}|${principal}`;
+[['originales','Originales'],['mayor','Mayor a menor'],['menor','Menor a mayor']].forEach(([orden,etiqueta])=>{
+const opcion=document.createElement('button');opcion.type='button';opcion.textContent=etiqueta;opcion.className=ordenTablas.get(claveOrden)===orden||(!ordenTablas.has(claveOrden)&&orden==='originales')?'active':'';
+opcion.addEventListener('click',()=>{ordenTablas.set(claveOrden,orden);renderTablasCuentas(matriz)});
+menuOrden.appendChild(opcion);
+});
+botonOrden.addEventListener('click',e=>{e.stopPropagation();$$('.organizacion-tabla-menu').forEach(m=>{if(m!==menuOrden)m.classList.add('hidden')});menuOrden.classList.toggle('hidden')});
+opciones.append(botonOrden,menuOrden);titulo.append(nombreTitulo,opciones);
 const scroll=document.createElement('div');scroll.className='tabla-cuenta-scroll';
 const tabla=document.createElement('table');tabla.className='tabla-cuenta';
 const thead=document.createElement('thead');const encabezado=document.createElement('tr');
 ['Subcuenta','Detalle','Valor'].forEach(t=>{const th=document.createElement('th');th.textContent=t;encabezado.appendChild(th)});thead.appendChild(encabezado);
 const tbody=document.createElement('tbody');
-for(const [subcuenta,detalles] of subs){
+let totalPrincipal=0;
+const modo=ordenTablas.get(claveOrden)||'originales';
+const grupos=[...subs.entries()].map(([nombre,lista])=>({nombre,detalles:[...lista],total:lista.reduce((s,item)=>s+Math.abs(item.valor),0)}));
+if(modo!=='originales')grupos.sort((a,b)=>modo==='mayor'?b.total-a.total:a.total-b.total);
+for(const grupo of grupos){
+const subcuenta=grupo.nombre;
+const detalles=grupo.detalles;
+if(modo!=='originales')detalles.sort((a,b)=>modo==='mayor'?Math.abs(b.valor)-Math.abs(a.valor):Math.abs(a.valor)-Math.abs(b.valor));
+const subtotal=detalles.reduce((s,item)=>s+Math.abs(item.valor),0);
+totalPrincipal+=subtotal;
 detalles.forEach((item,i)=>{
 const tr=document.createElement('tr');
 if(i===0){const td=document.createElement('td');td.className='subcuenta-combinada';td.rowSpan=detalles.length;td.textContent=subcuenta;tr.appendChild(td)}
@@ -707,7 +735,17 @@ const detalle=document.createElement('td');detalle.textContent=item.detalle;
 const monto=document.createElement('td');monto.className='valor-cuenta';monto.textContent=formatearDinero(item.valor);
 tr.append(detalle,monto);tbody.appendChild(tr);
 });
+if(grupos.length>1&&detalles.length>1){
+const filaSubtotal=document.createElement('tr');filaSubtotal.className='fila-subtotal-cuenta';
+const etiquetaSubtotal=document.createElement('td');etiquetaSubtotal.colSpan=2;etiquetaSubtotal.textContent=`TOTAL SUBCUENTA · ${subcuenta}`;
+const valorSubtotal=document.createElement('td');valorSubtotal.className='valor-cuenta';valorSubtotal.textContent=formatearDinero(subtotal);
+filaSubtotal.append(etiquetaSubtotal,valorSubtotal);tbody.appendChild(filaSubtotal);
 }
+}
+const filaPrincipal=document.createElement('tr');filaPrincipal.className='fila-total-principal';
+const etiquetaPrincipal=document.createElement('td');etiquetaPrincipal.colSpan=2;etiquetaPrincipal.textContent=`TOTAL CUENTA PRINCIPAL · ${principal}`;
+const valorPrincipal=document.createElement('td');valorPrincipal.className='valor-cuenta';valorPrincipal.textContent=formatearDinero(totalPrincipal);
+filaPrincipal.append(etiquetaPrincipal,valorPrincipal);tbody.appendChild(filaPrincipal);
 tabla.append(thead,tbody);scroll.appendChild(tabla);tarjeta.append(titulo,scroll);contenedor.appendChild(tarjeta);
 }
 }
@@ -720,7 +758,7 @@ for(const [principal,subs] of estructura.cuentas){
 const tipo=estructura.tipos.get(principal)||'';
 for(const [nombre,detalles] of subs){
 const valor=detalles.reduce((s,d)=>s+Math.abs(d.valor),0);
-categorias.push({nombre:`${principal} (${nombre})`,tipo,valor});
+categorias.push({principal,subcuenta:nombre,nombre:`${principal} (${nombre})`,tipo,valor});
 detalles.forEach(d=>{if(tipo==='4'){ingresos+=Math.abs(d.valor);cantidadIngresos++}else if(tipo==='5'){egresos+=Math.abs(d.valor);cantidadEgresos++}else desconocidas++});
 }
 }
@@ -782,6 +820,66 @@ else if(texto.includes(","))texto=/,\d{1,2}$/.test(texto)?texto.replace(",",".")
 const numero=Number(texto);return Number.isFinite(numero)?(negativo?-numero:numero):NaN;
 }
 function formatearDinero(valor){return new Intl.NumberFormat("es-EC",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2}).format(valor||0)}
+function abrirReporte(){
+const archivo=archivosCarga.find(a=>a.id===archivoResumenActual);
+if(!archivo?.matriz?.length){mostrarToast('Sin información','Selecciona un archivo cargado para imprimir.',false);return}
+const headers=archivo.matriz[0].map(normalizar);
+const empresaCol=headers.findIndex(h=>h==='empresa'||h==='compania'||h==='razon social');
+const nombreEmpresa=empresaCol>=0?archivo.matriz.slice(1).map(f=>String(f[empresaCol]??'').trim()).find(Boolean):'';
+$("#empresaReporte").value=nombreEmpresa||localStorage.getItem('nombre_empresa_reporte')||'';
+$("#proyectoReporte").value='';
+$("#modalReporte").classList.remove('hidden');
+setTimeout(()=>$(nombreEmpresa?'#proyectoReporte':'#empresaReporte').focus(),0);
+}
+function imprimirReporteGerencial(e){
+e.preventDefault();
+const empresa=$("#empresaReporte").value.trim(),proyecto=$("#proyectoReporte").value.trim();
+if(!empresa||!proyecto)return;
+const archivo=archivosCarga.find(a=>a.id===archivoResumenActual);
+if(!archivo?.matriz?.length)return;
+localStorage.setItem('nombre_empresa_reporte',empresa);
+construirReporteGerencial(archivo,empresa,proyecto);
+$("#modalReporte").classList.add('hidden');
+requestAnimationFrame(()=>window.print());
+}
+function nodoReporte(etiqueta,clase,texto){const n=document.createElement(etiqueta);if(clase)n.className=clase;if(texto!==undefined)n.textContent=texto;return n}
+function construirReporteGerencial(archivo,empresa,proyecto){
+const destino=$("#reporteImpresion");destino.innerHTML='';
+const datos=analizarCentrosCostos(archivo.matriz);
+const estructura=cuentasParaTablas(archivo.matriz);
+const cabecera=nodoReporte('header','reporte-cabecera');
+const marca=nodoReporte('div','reporte-marca','GESTIÓN EMPRESARIAL');
+const titulo=nodoReporte('h1','', 'Reporte gerencial de costos');
+const metadatos=nodoReporte('div','reporte-metadatos');
+[['Empresa',empresa],['Proyecto',proyecto],['Archivo',archivo.nombre],['Fecha',new Intl.DateTimeFormat('es-EC',{dateStyle:'long'}).format(new Date())]].forEach(([label,valor])=>{const p=nodoReporte('p','');p.append(nodoReporte('strong','',label+': '),document.createTextNode(valor));metadatos.appendChild(p)});
+cabecera.append(marca,titulo,metadatos);destino.appendChild(cabecera);
+const kpis=nodoReporte('section','reporte-kpis');
+[['Ingresos',datos.ingresos,'ingreso'],['Gastos',datos.egresos,'gasto'],['Resultado',datos.ingresos-datos.egresos,'resultado']].forEach(([label,valor,tipo])=>{const caja=nodoReporte('div',`reporte-kpi ${tipo}`);caja.append(nodoReporte('span','',label),nodoReporte('strong','',formatearDinero(valor)));kpis.appendChild(caja)});destino.appendChild(kpis);
+const intro=nodoReporte('p','reporte-nota','Importes consolidados desde el detalle de Nivel 5. Cuentas y subcuentas ordenadas de mayor a menor.');destino.appendChild(intro);
+for(const [tipo,encabezado] of [['4','INGRESOS'],['5','GASTOS']]){
+const seccion=nodoReporte('section',`reporte-seccion ${tipo==='4'?'reporte-ingreso':'reporte-gasto'}`);seccion.appendChild(nodoReporte('h2','',encabezado));
+const cuentas=[...estructura.cuentas.entries()].filter(([nombre])=>estructura.tipos.get(nombre)===tipo).map(([nombre,subs])=>({nombre,subs,total:[...subs.values()].flat().reduce((s,d)=>s+Math.abs(d.valor),0)})).sort((a,b)=>b.total-a.total);
+if(!cuentas.length)seccion.appendChild(nodoReporte('p','reporte-sin-datos','Sin cuentas clasificadas en este grupo.'));
+cuentas.forEach(cuenta=>{
+const bloque=nodoReporte('div','reporte-cuenta');
+const nombre=nodoReporte('h3','',cuenta.nombre);
+const tabla=nodoReporte('table','reporte-tabla');const thead=nodoReporte('thead','');const tr=nodoReporte('tr','');
+['Subcuenta','Detalle','Valor'].forEach(v=>tr.appendChild(nodoReporte('th','',v)));thead.appendChild(tr);
+const tbody=nodoReporte('tbody','');
+const subs=[...cuenta.subs.entries()].map(([nombre,detalles])=>({nombre,detalles:[...detalles],total:detalles.reduce((s,d)=>s+Math.abs(d.valor),0)})).sort((a,b)=>b.total-a.total);
+subs.forEach(sub=>{
+sub.detalles.sort((a,b)=>Math.abs(b.valor)-Math.abs(a.valor));
+sub.detalles.forEach((detalle,i)=>{const fila=nodoReporte('tr','');if(i===0){const td=nodoReporte('td','reporte-subcuenta',sub.nombre);td.rowSpan=sub.detalles.length;fila.appendChild(td)}fila.append(nodoReporte('td','',detalle.detalle),nodoReporte('td','reporte-valor',formatearDinero(detalle.valor)));tbody.appendChild(fila)});
+if(subs.length>1&&sub.detalles.length>1){const subtotal=nodoReporte('tr','reporte-subtotal');const etiqueta=nodoReporte('td','',`Subtotal · ${sub.nombre}`);etiqueta.colSpan=2;subtotal.append(etiqueta,nodoReporte('td','reporte-valor',formatearDinero(sub.total)));tbody.appendChild(subtotal)}
+});
+const total=nodoReporte('tr','reporte-total');const etiqueta=nodoReporte('td','',`TOTAL ${cuenta.nombre}`);etiqueta.colSpan=2;total.append(etiqueta,nodoReporte('td','reporte-valor',formatearDinero(cuenta.total)));tbody.appendChild(total);
+tabla.append(thead,tbody);bloque.append(nombre,tabla);seccion.appendChild(bloque);
+});destino.appendChild(seccion);
+}
+const firmas=nodoReporte('footer','reporte-firmas');
+[['Contadora','Elaborado'],['Gerente','Revisado']].forEach(([cargo,estado])=>{const firma=nodoReporte('div','reporte-firma');firma.append(nodoReporte('div','reporte-linea'),nodoReporte('strong','',cargo),nodoReporte('span','',estado));firmas.appendChild(firma)});
+destino.appendChild(firmas);
+}
 function renderGraficoCategorias(categorias,ingresos,egresos){
 const grupos=[["4","#graficoIngresosCategorias"],["5","#graficoGastosCategorias"]];
 const maximo=Math.max(ingresos,egresos,1);
@@ -797,7 +895,23 @@ grupos.forEach(([tipo,selector])=>{
 const grafico=$(selector);grafico.innerHTML="";
 const elementos=categorias.filter(c=>c.tipo===tipo).sort((a,b)=>b.valor-a.valor);
 if(!elementos.length){const p=document.createElement("p");p.className="resumen-sin-datos";p.textContent=tipo==="4"?"No hay ingresos para mostrar.":"No hay gastos para mostrar.";grafico.appendChild(p);return}
+const cuentas=new Map();
 elementos.forEach(c=>{
+const principal=c.principal||c.nombre.match(/^(.*?)\s*\(/)?.[1]||c.nombre;
+if(!cuentas.has(principal))cuentas.set(principal,{total:0,subcuentas:[]});
+const cuenta=cuentas.get(principal);cuenta.total+=c.valor;cuenta.subcuentas.push(c);
+});
+const ordenadas=[...cuentas.entries()].sort((a,b)=>b[1].total-a[1].total);
+ordenadas.forEach(([principal,cuenta])=>{
+const grupo=document.createElement("div");grupo.className=`grupo-categoria ${tipo==="4"?"ingreso":"egreso"}`;
+const encabezado=document.createElement("div");encabezado.className="grupo-categoria-encabezado";
+const titulo=document.createElement("strong");titulo.textContent=principal;
+const monto=document.createElement("strong");monto.textContent=`TOTAL ${formatearDinero(cuenta.total)}`;
+encabezado.append(titulo,monto);grupo.appendChild(encabezado);
+const pistaTotal=document.createElement("div");pistaTotal.className="barra-costo-pista barra-principal-pista";
+const rellenoTotal=document.createElement("div");rellenoTotal.className="barra-costo-relleno";rellenoTotal.style.width=`${cuenta.total/maximo*100}%`;
+pistaTotal.appendChild(rellenoTotal);grupo.appendChild(pistaTotal);
+cuenta.subcuentas.sort((a,b)=>b.valor-a.valor).forEach(c=>{
 const item=document.createElement("div");item.className=`barra-costo ${c.tipo==="4"?"ingreso":c.tipo==="5"?"egreso":"desconocido"}`;
 const cabecera=document.createElement("div");cabecera.className="barra-costo-cabecera";
 const nombre=document.createElement("span");nombre.textContent=c.nombre;nombre.title=c.nombre;
@@ -807,7 +921,9 @@ const valor=document.createElement("strong");valor.textContent=formatearDinero(c
 cabecera.append(nombre,valor);
 const pista=document.createElement("div");pista.className="barra-costo-pista";
 const relleno=document.createElement("div");relleno.className="barra-costo-relleno";relleno.style.width=`${c.valor/maximo*100}%`;
-pista.appendChild(relleno);item.append(cabecera,pista);grafico.appendChild(item);
+pista.appendChild(relleno);item.append(cabecera,pista);grupo.appendChild(item);
+});
+grafico.appendChild(grupo);
 });
 });
 }
