@@ -32,6 +32,14 @@ cambiarVista("proveedores");
 await cargarTodosLosJSON();
 }
 function configurarEventos(){
+const botonOpciones=$("#btnOpcionesContenido");
+const menuOpciones=$("#menuOpcionesContenido");
+botonOpciones.addEventListener("click",e=>{e.stopPropagation();const abierto=menuOpciones.classList.toggle("hidden");botonOpciones.setAttribute("aria-expanded",String(!abierto))});
+document.addEventListener("click",e=>{if(!e.target.closest(".opciones-contenido")){menuOpciones.classList.add("hidden");botonOpciones.setAttribute("aria-expanded","false")}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){menuOpciones.classList.add("hidden");botonOpciones.setAttribute("aria-expanded","false")}});
+$("#btnExportarContenido").addEventListener("click",exportarContenido);
+$("#btnImportarContenido").addEventListener("click",()=>$("#archivoImportarContenido").click());
+$("#archivoImportarContenido").addEventListener("change",importarContenido);
 $$('.vista-resumen').forEach(b=>b.addEventListener('click',()=>cambiarVistaResumen(b.dataset.resumen)));
 $("#selectorArchivoResumen").addEventListener("change",e=>{archivoResumenActual=e.target.value;actualizarResumen()});
 $$(".tab").forEach(tab=>tab.addEventListener("click",()=>cambiarVista(tab.dataset.vista)));
@@ -793,6 +801,8 @@ elementos.forEach(c=>{
 const item=document.createElement("div");item.className=`barra-costo ${c.tipo==="4"?"ingreso":c.tipo==="5"?"egreso":"desconocido"}`;
 const cabecera=document.createElement("div");cabecera.className="barra-costo-cabecera";
 const nombre=document.createElement("span");nombre.textContent=c.nombre;nombre.title=c.nombre;
+const partes=c.nombre.match(/^(.*?)(\s*\([^()]+\))$/);
+if(partes){nombre.textContent=partes[1];const detalle=document.createElement("strong");detalle.className="nombre-categoria-detalle";detalle.textContent=partes[2];nombre.appendChild(detalle)}
 const valor=document.createElement("strong");valor.textContent=formatearDinero(c.valor);
 cabecera.append(nombre,valor);
 const pista=document.createElement("div");pista.className="barra-costo-pista";
@@ -848,4 +858,34 @@ module.exports={
   combinarColumnas,
   obtenerColumnas,
 };
+}
+function exportarContenido(){
+const contenido={formato:"gestion-empresarial",version:1,fecha:new Date().toISOString(),datos:{
+archivosCarga,
+directorioRegistros:registrosLocales,
+directorioColumnas:columnas,
+directorioOrden:ordenFilas
+}};
+const blob=new Blob([JSON.stringify(contenido,null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob);const enlace=document.createElement("a");
+enlace.href=url;enlace.download=`gestion-empresarial-${new Date().toISOString().slice(0,10)}.json`;
+document.body.appendChild(enlace);enlace.click();enlace.remove();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
+$("#menuOpcionesContenido").classList.add("hidden");$("#btnOpcionesContenido").setAttribute("aria-expanded","false");
+mostrarToast("Contenido exportado","Se descargó el archivo JSON.",true);
+}
+async function importarContenido(e){
+const archivo=e.target.files[0];e.target.value="";if(!archivo)return;
+try{
+const contenido=JSON.parse(await archivo.text());
+if(contenido.formato!=="gestion-empresarial"||contenido.version!==1||!contenido.datos||!Array.isArray(contenido.datos.archivosCarga))throw new Error("El archivo no es una exportación válida del sistema.");
+const carga=contenido.datos.archivosCarga;
+if(!carga.every(a=>a&&typeof a.id==="string"&&typeof a.nombre==="string"&&Array.isArray(a.matriz)&&a.matriz.every(f=>Array.isArray(f))))throw new Error("Las vistas del archivo no tienen un formato válido.");
+for(const clave of ["directorioRegistros","directorioColumnas","directorioOrden"]){if(!contenido.datos[clave]||typeof contenido.datos[clave]!=="object"||Array.isArray(contenido.datos[clave]))throw new Error("Faltan datos del Directorio.")}
+localStorage.setItem("archivos_carga",JSON.stringify(carga));
+localStorage.setItem("directorio_registros",JSON.stringify(contenido.datos.directorioRegistros));
+localStorage.setItem("directorio_columnas",JSON.stringify(contenido.datos.directorioColumnas));
+localStorage.setItem("directorio_orden",JSON.stringify(contenido.datos.directorioOrden));
+location.reload();
+}catch(error){mostrarToast("No se pudo importar",error.message,false)}
 }
