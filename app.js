@@ -852,15 +852,15 @@ await Promise.all(logos.map(logo=>logo.decode?logo.decode().catch(()=>{}):Promis
 requestAnimationFrame(()=>window.print());
 }
 function nodoReporte(etiqueta,clase,texto){const n=document.createElement(etiqueta);if(clase)n.className=clase;if(texto!==undefined)n.textContent=texto;return n}
-function agregarLogoReporte(cabecera){
-const logo=nodoReporte('img','reporte-logo');logo.src='img/logo.png';logo.alt='Logo de la empresa';
+function agregarLogoReporte(cabecera,empresa){
+const logo=nodoReporte('img','reporte-logo');logo.src=normalizar(empresa)==='energytech'?'img/logo2.png':'img/logo.png';logo.alt='Logo de la empresa';
 logo.onerror=()=>logo.remove();cabecera.prepend(logo);
 }
 function porcentajeReporte(valor,total){return total?`${(valor/total*100).toFixed(1)} %`:'0,0 %'}
 function construirAnalisisGerencial(destino,archivo,datos,estructura){
 const hoja=nodoReporte('section','reporte-analisis');
 const cabecera=nodoReporte('header','reporte-analisis-cabecera');
-agregarLogoReporte(cabecera);
+agregarLogoReporte(cabecera,archivo.empresa);
 cabecera.append(nodoReporte('div','reporte-marca','ANÁLISIS GERENCIAL'),nodoReporte('h1','', 'Lectura ejecutiva de gastos'));
 cabecera.append(nodoReporte('p','',`${archivo.empresa} · ${archivo.proyecto} · ${archivo.nombre}`));hoja.appendChild(cabecera);
 const gastos=[...estructura.cuentas.entries()].filter(([nombre])=>estructura.tipos.get(nombre)==='5').map(([nombre,subs])=>({nombre,total:[...subs.values()].flat().reduce((s,d)=>s+Math.abs(d.valor),0),subs})).sort((a,b)=>b.total-a.total);
@@ -894,7 +894,7 @@ const destino=$("#reporteImpresion");destino.innerHTML='';
 const datos=analizarCentrosCostos(archivo.matriz);
 const estructura=cuentasParaTablas(archivo.matriz);
 const cabecera=nodoReporte('header','reporte-cabecera');
-agregarLogoReporte(cabecera);
+agregarLogoReporte(cabecera,archivo.empresa);
 const marca=nodoReporte('div','reporte-marca','GESTIÓN EMPRESARIAL');
 const titulo=nodoReporte('h1','', 'REPORTE GERENCIAL DE COSTOS');
 const metadatos=nodoReporte('div','reporte-metadatos');
