@@ -18,6 +18,7 @@ let columnaArrastrada=null;
 let archivosCarga=[];
 let vistaArchivoActual=null;
 let archivoResumenActual=null;
+let observadorCabeceraConsolidado=null;
 const ordenTablas=new Map();
 const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
@@ -166,6 +167,7 @@ function cambiarPagina(pagina){
 $$(".menu-item").forEach(x=>x.classList.toggle("active",x.dataset.page===pagina));
 $$(".page").forEach(x=>x.classList.remove("active"));
 if(pagina==="resumen"){$("#paginaResumen").classList.add("active");$("#breadcrumbActual").textContent="Resumen";actualizarResumen()}
+else if(pagina==="consolidado-empresas"){$("#paginaConsolidadoEmpresas").classList.add("active");$("#breadcrumbActual").textContent="Consolidado Empresas";renderConsolidadoEmpresas()}
 else if(pagina==="centros-costos"){$("#paginaCentrosCostos").classList.add("active");$("#breadcrumbActual").textContent="Carga de archivos"}
 else{$("#paginaDirectorio").classList.add("active");$("#breadcrumbActual").textContent="Directorio"}
 }
@@ -197,7 +199,79 @@ vistaArchivoActual=archivosCarga[0].id;
 archivoResumenActual=archivosCarga.find(a=>a.matriz.length)?.id||vistaArchivoActual;
 guardarArchivosCarga();renderVistasArchivos();mostrarVistaArchivoActual();actualizarSelectorArchivos();
 }
-function guardarArchivosCarga(){localStorage.setItem("archivos_carga",JSON.stringify(archivosCarga));if(typeof programarSincronizacionSupabase==="function")programarSincronizacionSupabase()}
+function guardarArchivosCarga(){localStorage.setItem("archivos_carga",JSON.stringify(archivosCarga));renderConsolidadoEmpresas();if(typeof programarSincronizacionSupabase==="function")programarSincronizacionSupabase()}
+function construirConsolidadoEmpresas(cargados){
+const cuentas=new Map(),sinEstructura=[];
+const crearGrupo=nombre=>({nombre,valores:Array(cargados.length).fill(null),hijos:new Map()});
+const sumar=(grupo,indice,valor)=>grupo.valores[indice]=(grupo.valores[indice]??0)+valor;
+cargados.forEach((archivo,indice)=>{
+const estructura=cuentasParaTablas(archivo.matriz);
+if(!estructura.detectado){sinEstructura.push(archivo.nombre);return}
+for(const [nombre,subs] of estructura.cuentas){
+const clave=JSON.stringify([estructura.tipos.get(nombre)||'',normalizar(nombre)]);
+if(!cuentas.has(clave))cuentas.set(clave,crearGrupo(nombre));
+const principal=cuentas.get(clave);
+principal.tipo=estructura.tipos.get(nombre)||'';
+for(const [nombreSub,detalles] of subs){
+const claveSub=normalizar(nombreSub);
+if(!principal.hijos.has(claveSub))principal.hijos.set(claveSub,crearGrupo(nombreSub));
+const sub=principal.hijos.get(claveSub);
+for(const detalle of detalles){
+const claveDetalle=normalizar(detalle.detalle);
+if(!sub.hijos.has(claveDetalle))sub.hijos.set(claveDetalle,crearGrupo(detalle.detalle));
+const valor=Math.abs(detalle.valor);
+sumar(sub.hijos.get(claveDetalle),indice,valor);sumar(sub,indice,valor);sumar(principal,indice,valor);
+}
+}
+}
+});
+return{cuentas,sinEstructura};
+}
+function renderConsolidadoEmpresas(){
+const cargados=archivosCarga.filter(a=>a.matriz?.length);
+const head=$("#consolidadoHead"),body=$("#consolidadoBody");
+head.replaceChildren();body.replaceChildren();
+['DETALLE','VALOR',...cargados.map(a=>a.nombre),''].forEach(nombre=>{const th=document.createElement('th');th.scope='col';th.textContent=nombre;head.appendChild(th)});
+const {cuentas,sinEstructura}=construirConsolidadoEmpresas(cargados);
+const fragmento=document.createDocumentFragment();
+const agregarFila=(grupo,nivel)=>{
+const tr=document.createElement('tr');tr.className='consolidado-'+nivel;
+const etiqueta=document.createElement('th');etiqueta.scope='row';etiqueta.textContent=grupo.nombre;tr.appendChild(etiqueta);
+const total=grupo.valores.reduce((s,v)=>s+(v??0),0);
+[total,...grupo.valores].forEach(valor=>{const td=document.createElement('td');td.textContent=valor===null?'—':formatearDinero(valor);if(valor===null)td.title='Sin registro en este archivo';tr.appendChild(td)});
+tr.appendChild(document.createElement('td'));
+fragmento.appendChild(tr);
+};
+const agregarCuenta=principal=>{
+agregarFila(principal,'principal');
+for(const sub of principal.hijos.values()){
+agregarFila(sub,'subcuenta');
+for(const detalle of sub.hijos.values())agregarFila(detalle,'detalle');
+}
+};
+if(!cuentas.size){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=cargados.length+3;td.className='consolidado-vacio';td.textContent=cargados.length?'No se encontraron cuentas con subcuentas y detalles para consolidar.':'Carga archivos para mostrar sus cuentas y valores.';tr.appendChild(td);fragmento.appendChild(tr)}
+const ingresos=Array(cargados.length).fill(0),gastos=Array(cargados.length).fill(0);
+for(const principal of cuentas.values()){
+const totales=principal.tipo==='4'?ingresos:principal.tipo==='5'?gastos:null;
+if(totales)principal.valores.forEach((valor,indice)=>totales[indice]+=valor??0);
+}
+for(const principal of cuentas.values())if(principal.tipo==='4')agregarCuenta(principal);
+agregarFila({nombre:'TOTAL INGRESOS',valores:ingresos},'total-ingresos');
+for(const principal of cuentas.values())if(principal.tipo!=='4')agregarCuenta(principal);
+agregarFila({nombre:'TOTAL GASTOS',valores:gastos},'total-gastos');
+agregarFila({nombre:'INGRESOS MENOS GASTOS',valores:ingresos.map((valor,indice)=>valor-gastos[indice])},'total-resultado');
+body.appendChild(fragmento);
+const tablaConsolidado=$("#tablaConsolidadoEmpresas");
+const cabeceraConsolidado=tablaConsolidado.querySelector('thead');
+const ajustarCabecera=()=>tablaConsolidado.style.setProperty('--alto-cabecera-consolidado',`${cabeceraConsolidado.getBoundingClientRect().height}px`);
+ajustarCabecera();
+if(!observadorCabeceraConsolidado){
+observadorCabeceraConsolidado=new ResizeObserver(ajustarCabecera);
+observadorCabeceraConsolidado.observe(cabeceraConsolidado);
+}
+$("#contadorArchivosConsolidado").textContent=cargados.length+(cargados.length===1?' archivo':' archivos');
+$("#notaConsolidado").textContent='VALOR suma todos los archivos. Subtotales calculados desde los detalles, con el mismo criterio de importes de Reportes. — indica que no existe un registro en ese archivo.'+(sinEstructura.length?' No se pudo identificar Cuenta y niveles 3, 4 y 5 en: '+sinEstructura.join(', ')+'.':'');
+}
 function archivoCargaActual(){return archivosCarga.find(a=>a.id===vistaArchivoActual)}
 function cargarDatosReporteArchivo(){
 const archivo=archivoCargaActual()||{};
@@ -898,7 +972,11 @@ agregarLogoReporte(cabecera,archivo.empresa);
 const marca=nodoReporte('div','reporte-marca','GESTIÓN EMPRESARIAL');
 const titulo=nodoReporte('h1','', 'REPORTE GERENCIAL DE COSTOS');
 const metadatos=nodoReporte('div','reporte-metadatos');
-[['Empresa',archivo.empresa],['Contrato Nro.',archivo.contrato],['Proyecto',archivo.proyecto],['Plazo',archivo.plazo],['Fecha',new Intl.DateTimeFormat('es-EC',{dateStyle:'long'}).format(new Date())],['Monto',archivo.monto]].forEach(([label,valor])=>{const p=nodoReporte('p','');p.append(nodoReporte('strong','',label+': '),document.createTextNode(valor));metadatos.appendChild(p)});
+const columnaIzquierda=nodoReporte('div','reporte-metadatos-columna');
+const columnaDerecha=nodoReporte('div','reporte-metadatos-columna');
+[['Empresa',archivo.empresa],['Contrato Nro.',archivo.contrato],['Plazo',archivo.plazo]].forEach(([label,valor])=>{const p=nodoReporte('p','');p.append(nodoReporte('strong','',label+': '),document.createTextNode(valor));columnaIzquierda.appendChild(p)});
+const proyecto=nodoReporte('p','');proyecto.append(nodoReporte('strong','','Proyecto: '),document.createTextNode(archivo.proyecto));columnaDerecha.appendChild(proyecto);
+metadatos.append(columnaIzquierda,columnaDerecha);
 cabecera.append(marca,titulo,metadatos);destino.appendChild(cabecera);
 const kpis=nodoReporte('section','reporte-kpis');
 [['Ingresos',datos.ingresos,'ingreso'],['Gastos',datos.egresos,'gasto'],['Resultado',datos.ingresos-datos.egresos,'resultado']].forEach(([label,valor,tipo])=>{const caja=nodoReporte('div',`reporte-kpi ${tipo}`);caja.append(nodoReporte('span','',label),nodoReporte('strong','',formatearDinero(valor)));kpis.appendChild(caja)});destino.appendChild(kpis);
