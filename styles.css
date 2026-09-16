@@ -239,7 +239,7 @@ html,body{width:auto;height:auto;margin:0;background:#fff;color:#252522;font-siz
 .reporte-logo{float:right;max-width:42mm;max-height:22mm;width:auto;height:auto;object-fit:contain;margin:0 0 5mm 8mm}
 .reporte-marca{font-size:9px;font-weight:700;letter-spacing:.16em;color:#787774}
 .reporte-cabecera h1{font-size:22px;letter-spacing:-.02em;margin:6px 0 10px}
-.reporte-metadatos{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px}.reporte-metadatos p{margin:0;font-size:9px}
+.reporte-metadatos{display:grid;grid-template-columns:1fr 1fr;gap:14px}.reporte-metadatos-columna{display:flex;flex-direction:column;gap:3px}.reporte-metadatos p{margin:0;font-size:9px}
 .reporte-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
 .reporte-kpi{display:flex;flex-direction:column;gap:5px;padding:10px;border:1px solid #dededb;border-top:3px solid #37352f;background:#f7f7f5}
 .reporte-kpi.ingreso{border-top-color:#3d9b68}.reporte-kpi.gasto{border-top-color:#d36a62}.reporte-kpi.resultado{border-top-color:#4c7fc0}
@@ -303,3 +303,26 @@ html,body{width:auto;height:auto;margin:0;background:#fff;color:#252522;font-siz
 @media(max-width:1000px){.sidebar{width:205px;min-width:205px}.summary-grid{grid-template-columns:repeat(2,1fr)}.database-toolbar{align-items:flex-start;flex-direction:column}.toolbar-right{width:100%}.search{flex:1}}
 @media(max-width:850px){.datos-reporte-archivo{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.sidebar{width:54px;min-width:54px}.workspace-info,.sidebar-action,.menu-item span:last-child,.sidebar-title,.sidebar-small span:last-child,.user-info{display:none}.workspace{justify-content:center}.menu-item{justify-content:center;padding:0}.sidebar-section{padding:15px 8px}.sidebar-small{justify-content:center}.sidebar-footer{justify-content:center}.page{padding:28px 10px 60px}.page-heading{margin-bottom:18px}.page-heading h1{font-size:26px}.page-heading p{font-size:12px}.page-icon{font-size:31px}.tabs{margin-left:-2px;margin-right:-2px}.database-toolbar{padding:8px}.toolbar-left{width:100%;justify-content:space-between}.toolbar-right{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:6px}.search{grid-column:1/-1;width:100%}.btn-new,.btn-import{width:100%;justify-content:center;padding:0 6px}.btn-new span:last-child,.btn-import span:last-child{font-size:10px}.table-scroll{width:100%;overflow-x:auto}#tablaDatos{min-width:max-content}#tablaDatos th,#tablaDatos td{min-width:115px}.row-number{min-width:44px!important;width:44px!important}.action-column{min-width:58px!important;width:58px!important}.row-actions{opacity:.65}.footer-info{display:none}.table-footer{padding:4px 6px}.footer-left{width:100%}.footer-action{font-size:10px;padding:0 5px}.toast{left:12px;right:12px;bottom:12px;min-width:0}}
+.menu-title{padding-top:13px;padding-bottom:9px}.menu-separator{border:0;border-top:1px solid var(--border-dark);margin:12px 8px}.consolidado-database{width:100%;overflow:hidden}.consolidado-scroll{width:100%;overflow:auto;max-height:65vh}#tablaConsolidadoEmpresas{width:100%;min-width:760px;border-collapse:separate;border-spacing:0;table-layout:fixed}#tablaConsolidadoEmpresas th,#tablaConsolidadoEmpresas td{width:210px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 16px;text-align:left}#tablaConsolidadoEmpresas th{position:sticky;top:0;z-index:2;background:var(--sidebar);font-size:11px;font-weight:500;color:var(--muted);overflow-wrap:anywhere}#tablaConsolidadoEmpresas th:first-child,#tablaConsolidadoEmpresas td:first-child{width:300px;position:sticky;left:0;background:var(--bg);z-index:1}#tablaConsolidadoEmpresas th:first-child{background:var(--sidebar);z-index:3}#tablaConsolidadoEmpresas th:nth-child(2),#tablaConsolidadoEmpresas td:nth-child(2){width:160px}#tablaConsolidadoEmpresas td{height:43px;font-size:12px}#tablaConsolidadoEmpresas tr:hover td{background:#fafaf9}.consolidado-nota{margin:0;padding:13px 16px;font-size:11px;color:var(--muted)}
+#tablaConsolidadoEmpresas th,#tablaConsolidadoEmpresas td{width:160px;padding:7px 10px}
+#tablaConsolidadoEmpresas th:first-child,#tablaConsolidadoEmpresas td:first-child{width:260px}
+#tablaConsolidadoEmpresas th:nth-child(2),#tablaConsolidadoEmpresas td:nth-child(2){width:130px}
+#tablaConsolidadoEmpresas td{height:30px;font-size:11px}
+#tablaConsolidadoEmpresas tbody th{top:auto;z-index:1;font-size:11px;font-weight:400;color:var(--text);overflow-wrap:anywhere}
+#tablaConsolidadoEmpresas tbody td{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#tablaConsolidadoEmpresas tbody tr.consolidado-principal>*{background:#62625f;color:#fff;border-top:2px solid #41413e;font-weight:700;font-size:12px;padding-top:9px;padding-bottom:9px}
+#tablaConsolidadoEmpresas tbody tr.consolidado-subcuenta>*{background:#c7c7c3;font-weight:600}
+#tablaConsolidadoEmpresas tbody tr.consolidado-subcuenta>th{padding-left:20px}
+#tablaConsolidadoEmpresas tbody tr.consolidado-detalle>*{background:#efefed}
+#tablaConsolidadoEmpresas tbody tr.consolidado-detalle>th{padding-left:30px}
+#tablaConsolidadoEmpresas tbody tr.consolidado-detalle>td:nth-child(n+3){background:#fff}
+#tablaConsolidadoEmpresas tbody td.consolidado-vacio{text-align:left;white-space:normal;height:150px;color:var(--muted)}
+#tablaConsolidadoEmpresas thead th{position:sticky;top:0;z-index:4}
+#tablaConsolidadoEmpresas thead th:first-child{left:0;z-index:5}
+#tablaConsolidadoEmpresas tbody th:first-child{top:auto;z-index:1}
+#tablaConsolidadoEmpresas tbody tr.consolidado-total-ingresos>*,#tablaConsolidadoEmpresas tbody tr.consolidado-total-gastos>*,#tablaConsolidadoEmpresas tbody tr.consolidado-total-resultado>*{font-weight:700;font-size:12px;padding-top:9px;padding-bottom:9px;border-top:2px solid}
+#tablaConsolidadoEmpresas tbody tr.consolidado-total-ingresos>*{background:#e4f1e7;color:#246337;border-top-color:#88b696}
+#tablaConsolidadoEmpresas tbody tr.consolidado-total-ingresos>*{position:sticky;top:var(--alto-cabecera-consolidado,32px);z-index:2;box-shadow:0 2px 0 #88b696}
+#tablaConsolidadoEmpresas tbody tr.consolidado-total-ingresos>th:first-child{top:var(--alto-cabecera-consolidado,32px);left:0;z-index:3}
+#tablaConsolidadoEmpresas tbody tr.consolidado-total-gastos>*{background:#f8e5e5;color:#a33232;border-top-color:#d99b9b}
+#tablaConsolidadoEmpresas tbody tr.consolidado-total-resultado>*{background:#62625f;color:#fff;border-top-color:#41413e}
